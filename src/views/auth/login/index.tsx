@@ -21,7 +21,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={styles.loginContainer}>
+    <div className={styles.main}>
       <div className={styles.loginCard}>
         <div className={styles.loginCard_header}>
           <img
@@ -93,7 +93,11 @@ export default function LoginPage() {
                   className={styles.passwordToggle}
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                    <img width="25"  src="https://img.icons8.com/sf-black-filled/64/visible.png" alt="visible"/>
+                  <img
+                    width="25"
+                    src={showPassword ? "https://img.icons8.com/sf-black-filled/64/invisible.png" : "https://img.icons8.com/sf-black-filled/64/visible.png"}
+                    alt={showPassword ? "invisible" : "visible"}
+                  />
                 </button>
               </div>
             </div>
