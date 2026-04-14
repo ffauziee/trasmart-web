@@ -1,0 +1,266 @@
+.dashboardWrapper {
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: linear-gradient(155deg, #d7ecdf 0%, #c6e3d2 48%, #b8dbc8 100%);
+}
+
+.panelGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.mainPanel {
+  background: #e7f3eb;
+  border: 1px solid rgba(50, 69, 72, 0.14);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.headerBlock h1 {
+  margin: 0.2rem 0 0.4rem;
+  color: #203335;
+  font-size: clamp(1.2rem, 1.8vw, 1.8rem);
+}
+
+.kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #52787a;
+  font-weight: 700;
+}
+
+.dateText {
+  margin: 0;
+  color: #69898b;
+  font-size: 0.9rem;
+}
+
+.chartCard,
+.historyCard,
+.summaryCard,
+.infoCard {
+  background: #f7fbf8;
+  border: 1px solid rgba(50, 69, 72, 0.12);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.chartTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.chartTitleRow h2,
+.historyCard h2,
+.summaryCard h3,
+.infoCard h4 {
+  margin: 0;
+  color: #243b3d;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #4c6769;
+  font-size: 0.85rem;
+}
+
+.dotMetal,
+.dotNonMetal {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+}
+
+.dotMetal {
+  background: #3f6f73;
+}
+
+.dotNonMetal {
+  background: #7ab08d;
+}
+
+.chartArea {
+  margin-top: 1rem;
+  min-height: 190px;
+  padding-top: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: end;
+  gap: 0.65rem;
+}
+
+.dayGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dayGroup span {
+  font-size: 0.75rem;
+  color: #597779;
+  font-weight: 600;
+}
+
+.bars {
+  height: 150px;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+
+.bar {
+  width: 0.52rem;
+  border-radius: 0.42rem 0.42rem 0 0;
+}
+
+.metalBar {
+  background: linear-gradient(180deg, #6e9ea2 0%, #335d61 100%);
+}
+
+.nonMetalBar {
+  background: linear-gradient(180deg, #a5d6b3 0%, #6fa57f 100%);
+}
+
+.historyList {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.historyItem {
+  border: 1px solid rgba(77, 103, 105, 0.15);
+  border-radius: 0.8rem;
+  background: #ffffff;
+  padding: 0.8rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.historyDot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 999px;
+}
+
+.metalHistory {
+  background: #3f6f73;
+}
+
+.nonMetalHistory {
+  background: #7ab08d;
+}
+
+.historyInfo strong {
+  display: block;
+  color: #243b3d;
+}
+
+.historyInfo p {
+  margin: 0.2rem 0 0;
+  color: #668486;
+  font-size: 0.82rem;
+}
+
+.historyMeta {
+  text-align: right;
+}
+
+.historyMeta span {
+  display: block;
+  color: #597779;
+  font-size: 0.78rem;
+}
+
+.historyMeta strong {
+  color: #243b3d;
+}
+
+.sidePanel {
+  display: grid;
+  gap: 1rem;
+}
+
+.totalText {
+  margin: 0.4rem 0 1rem;
+  color: #628487;
+  font-size: 0.9rem;
+}
+
+.progressRow {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.95rem;
+}
+
+.progressHead {
+  display: flex;
+  justify-content: space-between;
+  color: #3b5a5d;
+  font-size: 0.88rem;
+}
+
+.progressTrack {
+  height: 0.45rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #dcece2;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.progressMetal {
+  background: linear-gradient(90deg, #7db0b4 0%, #3f6f73 100%);
+}
+
+.progressNonMetal {
+  background: linear-gradient(90deg, #a0d2ae 0%, #6fa57f 100%);
+}
+
+.infoLabel {
+  margin: 0;
+  color: #5f8487;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.infoCard p {
+  margin: 0.55rem 0 0;
+  color: #5d7d7f;
+  line-height: 1.5;
+}
+
+@media (min-width: 1024px) {
+  .panelGrid {
+    grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1fr);
+    gap: 1.2rem;
+  }
+}

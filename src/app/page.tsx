@@ -61,7 +61,12 @@ export default function LandingPage() {
           </div>
           <div className={styles.heroImage}>
             <div className={styles.imageWrapper}>
-              <Image width="150" height="150" src="/landing-image.svg" alt="landing-sign" />
+              <Image
+                width="150"
+                height="150"
+                src="/landing-image.svg"
+                alt="landing-sign"
+              />
             </div>
             <p>Join thousands of users making a difference</p>
           </div>
