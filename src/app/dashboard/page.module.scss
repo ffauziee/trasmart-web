@@ -1,0 +1,14 @@
+.dashboardLayout {
+  min-height: 100vh;
+}
+
+.dashboardContent {
+  margin-left: 0;
+  transition: margin-left 0.2s ease;
+}
+
+@media (min-width: 1024px) {
+  .dashboardContent {
+    margin-left: 260px;
+  }
+}
