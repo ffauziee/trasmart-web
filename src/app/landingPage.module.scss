@@ -44,7 +44,6 @@ $desktop: 1024px;
 
 // Navbar styles
 .navbar {
-  position: sticky;
   top: 0;
   z-index: 50;
   background-color: $white;
@@ -66,6 +65,13 @@ $desktop: 1024px;
       width: 50px;
       height: auto;
     }
+  }
+
+  .navTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $primary-green;
+    margin-left: 0.5rem;
   }
 
   .navLinks {
@@ -100,6 +106,7 @@ $desktop: 1024px;
 
 // Hero section
 .heroSection {
+  border-radius: 10px;
   @extend .container;
   padding: 5rem 1rem;
 

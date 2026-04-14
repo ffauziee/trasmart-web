@@ -23,6 +23,9 @@ export default function LandingPage() {
               alt="recycle-sign"
             />
           </div>
+          <div className={styles.navTitle}>
+            <h1>TrasMart</h1>
+          </div>
           <div className={styles.navLinks}>
             <Link href="/auth/signin" className={styles.signIn}>
               Sign In
