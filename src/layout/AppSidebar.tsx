@@ -23,11 +23,6 @@ const navItems: NavItem[] = [
     shortLabel: "MP",
   },
   {
-    name: "Rewards",
-    path: "/rewards",
-    shortLabel: "RW",
-  },
-  {
     name: "User Profile",
     path: "/profile",
     shortLabel: "UP",
@@ -62,9 +57,7 @@ const AppSidebar: React.FC = () => {
             }}
           >
             <span className={styles.shortLabel}>{nav.shortLabel}</span>
-            {isOpen && (
-              <span className={styles.menuText}>{nav.name}</span>
-            )}
+            {isOpen && <span className={styles.menuText}>{nav.name}</span>}
           </Link>
         </li>
       ))}
@@ -84,37 +77,41 @@ const AppSidebar: React.FC = () => {
       </button>
 
       <aside
-      className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : styles.sidebarCollapsed} ${
-        isMobileOpen ? styles.sidebarMobileOpen : ""
-      }`}
-      onMouseEnter={() => !isExpanded && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className={styles.topRow}>
-        {isOpen ? <h2>Trasmart</h2> : <h2>TM</h2>}
-        <button className={styles.collapseBtn} type="button" onClick={toggleSidebar}>
-          {isExpanded ? "<" : ">"}
-        </button>
-      </div>
+        className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : styles.sidebarCollapsed} ${
+          isMobileOpen ? styles.sidebarMobileOpen : ""
+        }`}
+        onMouseEnter={() => !isExpanded && setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* <div className={styles.topRow}>
+          {isOpen ? <h2>Trasmart</h2> : <h2>TM</h2>}
+          <button
+            className={styles.collapseBtn}
+            type="button"
+            onClick={toggleSidebar}
+          >
+            {isExpanded ? "<" : ">"}
+          </button>
+        </div> */}
 
-      <div className={styles.profileCard}>
-        <div className={styles.avatar}>A</div>
-        {isOpen && (
-          <div>
-            <p className={styles.profileName}>Aryok</p>
-            <p className={styles.profileEmail}>example@mail.com</p>
-          </div>
-        )}
-      </div>
+        <div className={styles.profileCard}>
+          <div className={styles.avatar}>A</div>
+          {isOpen && (
+            <div>
+              <p className={styles.profileName}>Aryok</p>
+              <p className={styles.profileEmail}>example@mail.com</p>
+            </div>
+          )}
+        </div>
 
-      <nav className={styles.navSection}>
-        {isOpen && <p className={styles.sectionLabel}>Menu</p>}
-        {renderMenuItems(navItems)}
-      </nav>
+        <nav className={styles.navSection}>
+          {isOpen && <p className={styles.sectionLabel}>Menu</p>}
+          {renderMenuItems(navItems)}
+        </nav>
 
-      <div className={styles.footerHint}>
-        {isOpen ? "Sort your waste, save the planet." : "Eco"}
-      </div>
+        <div className={styles.footerHint}>
+          {isOpen ? "Sort your waste, save the planet." : "Eco"}
+        </div>
       </aside>
     </>
   );
