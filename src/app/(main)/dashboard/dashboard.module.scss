@@ -1,0 +1,733 @@
+﻿@use "../../components/theme/tokens" as *;
+
+/* Dashboard Route Layout */
+.dashboardLayout {
+  display: flex;
+  height: 100vh;
+  background: $bgPage;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  overflow: hidden;
+  position: relative;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    flex-direction: row;
+    height: 100vh;
+  }
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    height: 100vh;
+  }
+}
+
+.dashboardContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: $bgPage;
+
+  @media (max-width: 767px) {
+    width: 100%;
+    margin-top: 4rem;
+    padding-bottom: 2rem;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    width: calc(100% - 260px);
+    margin-left: 0;
+  }
+
+  @media (min-width: 1024px) {
+    width: calc(100% - 260px);
+    margin-left: 0;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(22, 101, 52, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(22, 101, 52, 0.2);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(22, 101, 52, 0.3);
+    }
+  }
+}
+
+/* Main Container */
+.mainContainer {
+  padding: 1rem;
+  padding-top: 4rem;
+
+  @media (min-width: 1024px) {
+    padding: 2rem;
+    padding-top: 2rem;
+  }
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.topbarContent h2 {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: $dark-green;
+  margin: 0;
+
+  @media (min-width: 1024px) {
+    font-size: 2.25rem;
+  }
+}
+
+.topbarContent p {
+  color: $textLight;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+
+  @media (min-width: 1024px) {
+    font-size: 1rem;
+  }
+}
+
+.notificationBtn {
+  background: $white;
+  padding: 0.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  color: $dark-green;
+  border: 1px solid $gray-100;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.notificationBadge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: $errorColor;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  border: 2px solid $white;
+}
+
+/* Grid Layout */
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding-bottom: 2.5rem;
+
+  @media (min-width: 1280px) {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Card Styling */
+.card {
+  background: $white;
+  border-radius: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid $gray-300;
+}
+
+.bannerCard {
+  @extend .card;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 2rem;
+  }
+}
+
+.bannerGradient {
+  position: absolute;
+  right: -2.5rem;
+  top: -2.5rem;
+  background: rgba(158, 207, 185, 0.1);
+  width: 10rem;
+  height: 10rem;
+  border-radius: 9999px;
+  filter: blur(3rem);
+  pointer-events: none;
+}
+
+.bannerContent {
+  z-index: 10;
+}
+
+.bannerLabel {
+  color: $textGray;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  margin: 0;
+}
+
+.balanceDisplay {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.balanceAmount {
+  font-size: 3rem;
+  font-weight: 900;
+  color: $dark-green;
+}
+
+.balanceUnit {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: $accentColor;
+}
+
+.balanceDescription {
+  font-size: 0.875rem;
+  color: $textGray;
+  margin-top: 0.5rem;
+  margin: 0;
+}
+
+.bannerDivider {
+  height: 4rem;
+  width: 1px;
+  background: $gray-100;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
+}
+
+.impactCards {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  z-index: 10;
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
+}
+
+.impactCard {
+  background: $bgMintSoft;
+  padding: 1rem;
+  border-radius: 1rem;
+  flex: 1;
+  border: 1px solid rgba(158, 207, 185, 0.3);
+
+  @media (min-width: 768px) {
+    flex: none;
+  }
+}
+
+.impactLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $dark-green;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.impactValue {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: $dark-green;
+  margin: 0;
+}
+
+.impactValueSmall {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: $textLight;
+}
+
+/* Chart Card */
+.chartCard {
+  @extend .card;
+  padding: 1.5rem;
+
+  @media (min-width: 1024px) {
+    padding: 2rem;
+  }
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.chartTitle h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: $dark-green;
+  margin: 0;
+}
+
+.chartSubtitle {
+  font-size: 0.875rem;
+  color: $textLight;
+  margin-top: 0.25rem;
+  margin: 0;
+}
+
+.chartSelect {
+  background: $gray-50;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $gray-600;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.chartBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  height: 8rem;
+  margin-top: 1rem;
+
+  @media (min-width: 768px) {
+    gap: 0.5rem;
+  }
+}
+
+.barContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+
+  &:hover .bar {
+    background-color: $accentLight;
+  }
+}
+
+.bar {
+  width: 100%;
+  border-radius: 0.125rem 0.125rem 0 0;
+  transition: all 0.3s;
+
+  &.active {
+    background-color: $dark-green;
+  }
+
+  &:not(.active) {
+    background-color: $borderColor;
+  }
+}
+
+/* History Section */
+.historySection {
+  display: flex;
+  flex-direction: column;
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
+}
+
+.historyTitle {
+  font-weight: bold;
+  color: $textMedium;
+  margin: 0;
+}
+
+.historyMoreBtn {
+  color: $textGray;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    color: $gray-600;
+  }
+}
+
+.historyContainer {
+  background: $white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid $gray-100;
+  overflow: hidden;
+}
+
+.historyItem {
+  padding: 1rem;
+  border-bottom: 1px solid $gray-50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: $gray-50;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.historyIconContainer {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.historyIconRecycle {
+  @extend .historyIconContainer;
+  background: $accentColor;
+}
+
+.historyIconCoin {
+  @extend .historyIconContainer;
+  background: $accentLight;
+}
+
+.historyInfo {
+  flex: 1;
+}
+
+.historyTitle {
+  font-weight: 600;
+  color: $gray-800;
+  margin: 0;
+}
+
+.historyMeta {
+  font-size: 0.75rem;
+  color: $textGray;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.125rem;
+  margin: 0;
+}
+
+.historyPoints {
+  font-weight: bold;
+  color: $dark-green;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Right Column - Status Card */
+.statusCard {
+  @extend .card;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.statusCardBorder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0.25rem;
+  background: linear-gradient(to right, $accentLight, $dark-green);
+}
+
+.statusTitle {
+  font-weight: bold;
+  color: $gray-800;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.statusMachine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.machineName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $gray-600;
+  margin: 0;
+}
+
+.onlineBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: $dark-green;
+  background: $bgMintSoft;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.pulseIndicator {
+  position: relative;
+  display: flex;
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.pulsePing {
+  position: absolute;
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: $accentColor;
+  opacity: 0.75;
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.pulseDot {
+  position: relative;
+  display: inline-flex;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: $accentColor;
+}
+
+.capacityBar {
+  width: 100%;
+  background: $gray-100;
+  border-radius: 9999px;
+  height: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.capacityFill {
+  background: $dark-green;
+  height: 0.5rem;
+  border-radius: 9999px;
+  transition: all 2s;
+}
+
+.capacityText {
+  font-size: 0.75rem;
+  color: $textGray;
+  margin-top: 0.25rem;
+  text-align: right;
+  margin: 0;
+}
+
+/* Points Source Card */
+.pointsSourceCard {
+  @extend .card;
+  padding: 1.5rem;
+}
+
+.pointsSourceTitle {
+  font-weight: bold;
+  color: $gray-800;
+  margin-bottom: 1.5rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.pointsSourceList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.pointsSourceItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pointsSourceHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.pointsSourceLabel {
+  font-weight: 500;
+  color: $gray-600;
+}
+
+.pointsSourceAmount {
+  font-weight: bold;
+  color: $dark-green;
+}
+
+.pointsProgressBar {
+  width: 100%;
+  background: $gray-100;
+  border-radius: 9999px;
+  height: 0.5rem;
+}
+
+.pointsProgressFill {
+  height: 0.5rem;
+  border-radius: 9999px;
+
+  &.plastic {
+    background: $accentColor;
+  }
+
+  &.metal {
+    background: $accentLight;
+  }
+}
+
+/* CTA Card */
+.ctaCard {
+  background: $dark-green;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: $white;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaIcon {
+  position: absolute;
+  right: -1.25rem;
+  bottom: -1.25rem;
+  opacity: 0.1;
+}
+
+.ctaTitle {
+  font-weight: bold;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 10;
+  margin: 0;
+}
+
+.ctaDescription {
+  font-size: 0.875rem;
+  color: $accentLight;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 10;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.ctaProgressBar {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+  height: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 10;
+}
+
+.ctaProgressFill {
+  background: $accentLight;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+.ctaButton {
+  width: 100%;
+  background: $accentLight;
+  color: $dark-green;
+  font-weight: bold;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $accentColor;
+    color: $white;
+  }
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
