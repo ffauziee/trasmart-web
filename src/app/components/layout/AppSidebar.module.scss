@@ -17,6 +17,8 @@
 
   @media (max-width: 1023px) {
     display: block;
+    left: auto;
+    right: 1rem;
   }
 }
 
@@ -36,9 +38,9 @@
   box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
   overflow-x: hidden;
   white-space: nowrap;
+  width: 260px;
 
   @media (max-width: 1023px) {
-    width: 260px;
     transform: translateX(-100%);
   }
 
@@ -47,6 +49,8 @@
     height: calc(100vh - 2rem);
     margin: 1rem;
     border-radius: 1.5rem;
+    transform: translateX(0);
+    width: 90px;
   }
 }
 
@@ -54,13 +58,11 @@
   width: 260px;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-
-  @media (max-width: 1023px) {
-    transform: translateX(0);
-  }
+  transform: translateX(0) !important;
 
   @media (min-width: 1024px) {
     width: 260px;
+    transform: translateX(0);
   }
 }
 
@@ -68,6 +70,15 @@
   width: 90px;
   padding-left: 1.2rem;
   padding-right: 1.2rem;
+
+  @media (max-width: 1023px) {
+    transform: translateX(-100%);
+  }
+
+  @media (min-width: 1024px) {
+    width: 90px;
+    transform: translateX(0);
+  }
 }
 
 /* Brand Logo Section */
@@ -248,26 +259,5 @@
 
   @media (max-width: 1023px) {
     display: block;
-  }
-}
-
-@media (max-width: 1023px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
-}
-
-@media (min-width: 1024px) {
-  .mobileToggle {
-    display: none !important;
-  }
-
-  .sidebar {
-    position: relative;
-    transform: translateX(0) !important;
-  }
-
-  .mobileOverlay {
-    display: none !important;
   }
 }
