@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { ThemeProvider } from "./context/themeContext";
+// import { ThemeProvider } from "./context/themeContext";
 import { Inter, Poppins } from "next/font/google";
 
 const inter = Inter({
@@ -25,9 +25,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html data-theme="light">
+    <html lang="en">
       <body className={`${inter.variable} ${poppins.variable}`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        {/* <ThemeProvider>{children}</ThemeProvider> */}
+        {children}
       </body>
     </html>
   );

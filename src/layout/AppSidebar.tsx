@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import {
   LayoutDashboard,
-  Coins,
   User,
   Settings,
-  Recycle,
   LogOut,
   Menu,
   BaggageClaim,
 } from "lucide-react";
 import styles from "./AppSidebar.module.scss";
 import { useRouter, usePathname } from "next/navigation";
+import { useSidebar } from "@/context/SidebarContext";
 
 type NavItem = { name: string; path: string; icon: React.ReactNode };
 
@@ -29,14 +28,17 @@ const navItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const {
+    isExpanded,
+    isMobileOpen,
+    isHovered,
+    toggleMobileSidebar,
+    setIsHovered,
+  } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
 
   const isOpen = isExpanded || isHovered || isMobileOpen;
-  const toggleMobileSidebar = () => setIsMobileOpen(!isMobileOpen);
 
   const renderMenuItems = (items: NavItem[]) => (
     <ul className={styles.menuList}>
