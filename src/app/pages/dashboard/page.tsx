@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SidebarProvider } from "@/context/SidebarContext";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import AppSidebar from "@/app/components/layout/AppSidebar";
 import { Leaf, MapPin, Bell, HandCoins } from "lucide-react";
 import styles from "./dashboard.module.scss";

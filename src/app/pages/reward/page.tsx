@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { SidebarProvider } from "@/context/SidebarContext";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import AppSidebar from "@/app/components/layout/AppSidebar";
 import { BookOpen, ShoppingBag, Bell } from "lucide-react";
 import styles from "./reward.module.scss";
