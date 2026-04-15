@@ -2,16 +2,54 @@
 .accountLayout {
   display: flex;
   height: 100vh;
+  background: #f4fff8;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  overflow: hidden;
+  position: relative;
 
   @media (max-width: 767px) {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    flex-direction: row;
+    height: 100vh;
+  }
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    height: 100vh;
   }
 }
 
 .accountContent {
   flex: 1;
   overflow-y: auto;
-  background-color: #f9fafb;
+  overflow-x: hidden;
+  background: #f4fff8;
+
+  @media (max-width: 767px) {
+    width: 100%;
+    margin-top: 4rem;
+    padding-bottom: 2rem;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    width: calc(100% - 260px);
+    margin-left: 0;
+  }
+
+  @media (min-width: 1024px) {
+    width: calc(100% - 260px);
+    margin-left: 0;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(22, 101, 52, 0.2) transparent;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -22,11 +60,11 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #d1d5db;
+    background: rgba(22, 101, 52, 0.2);
     border-radius: 4px;
 
     &:hover {
-      background: #9ca3af;
+      background: rgba(22, 101, 52, 0.3);
     }
   }
 }
@@ -51,74 +89,71 @@ $successColor: #10b981;
 
 /* Main Container */
 .mainContainer {
-  padding: 1.5rem;
-  max-width: 100%;
-
-  @media (min-width: $tablet) {
-    padding: 2rem;
-  }
+  padding: 1rem;
+  padding-top: 4rem;
 
   @media (min-width: $desktop) {
-    padding: 2.5rem;
+    padding: 2rem;
+    padding-top: 2rem;
   }
 }
 
 /* Topbar */
 .topbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
-  gap: 1rem;
-
-  @media (max-width: 767px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 
 .topbarContent {
-  flex: 1;
-
   h2 {
-    font-size: 1.75rem;
+    font-size: 1.875rem;
     font-weight: bold;
-    color: $textDark;
-    margin: 0 0 0.25rem 0;
+    color: #166534;
+    margin: 0;
+
+    @media (min-width: $desktop) {
+      font-size: 2.25rem;
+    }
   }
 
   p {
+    color: #6b7280;
+    margin-top: 0.25rem;
     font-size: 0.875rem;
-    color: $textGray;
-    margin: 0;
+
+    @media (min-width: $desktop) {
+      font-size: 1rem;
+    }
   }
 }
 
 .notificationBtn {
+  background: $white;
+  padding: 0.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   position: relative;
-  background: none;
-  border: none;
-  color: $textDark;
+  color: #166534;
+  border: 1px solid #f3f4f6;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  transition: color 0.2s ease;
+  transition: box-shadow 0.2s;
 
   &:hover {
-    color: $accentColor;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 }
 
 .notificationBadge {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 8px;
-  height: 8px;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.625rem;
+  height: 0.625rem;
   background-color: $errorColor;
-  border-radius: 50%;
+  border-radius: 9999px;
+  border: 2px solid $white;
 }
 
 /* Content Layout */
@@ -135,9 +170,10 @@ $successColor: #10b981;
 /* Profile Card */
 .profileCard {
   background-color: $white;
-  border-radius: 1rem;
+  border-radius: 1.5rem;
   padding: 2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d1d5db;
 
   @media (max-width: 767px) {
     padding: 1.5rem;
@@ -421,9 +457,10 @@ $successColor: #10b981;
 /* Stats Card */
 .statsCard {
   background-color: $white;
-  border-radius: 1rem;
+  border-radius: 1.5rem;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d1d5db;
 }
 
 .statsTitle {
@@ -459,9 +496,10 @@ $successColor: #10b981;
 /* Actions Card */
 .actionsCard {
   background-color: $white;
-  border-radius: 1rem;
+  border-radius: 1.5rem;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d1d5db;
 }
 
 .actionsTitle {
