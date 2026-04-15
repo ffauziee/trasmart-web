@@ -24,7 +24,7 @@ const navItems: NavItem[] = [
     icon: <LayoutDashboard size={20} />,
   },
   { name: "Reward", path: "/reward", icon: <BaggageClaim size={20} /> },
-  { name: "Account", path: "/profile", icon: <User size={20} /> },
+  { name: "Account", path: "/account", icon: <User size={20} /> },
   { name: "Settings", path: "/settings", icon: <Settings size={20} /> },
 ];
 
@@ -86,12 +86,7 @@ const AppSidebar: React.FC = () => {
         {/* Brand Logo */}
         <div className={styles.brandSection}>
           <div className={styles.brandIcon}>
-            <Image
-              width="35"
-              height="35"
-              src="/icon.png"
-              alt="logo-sign"
-            />
+            <Image width="35" height="35" src="/icon.png" alt="logo-sign" />
           </div>
           {isOpen && <h1 className={styles.brandText}>TrasMart</h1>}
         </div>
