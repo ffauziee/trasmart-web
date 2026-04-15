@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import {
   LayoutDashboard,
   Coins,
-  UserCircle,
+  User,
   Settings,
   Recycle,
   LogOut,
   Menu,
+  BaggageClaim,
 } from "lucide-react";
 
 type NavItem = {
@@ -29,9 +30,14 @@ const navItems: NavItem[] = [
     icon: <Coins size={20} />,
   },
   {
+    name: "Reward",
+    path: "/reward",
+    icon: <BaggageClaim size={20} />,
+  },
+  {
     name: "Account",
     path: "/profile",
-    icon: <UserCircle size={20} />,
+    icon: <User size={20} />,
   },
   {
     name: "Settings",
@@ -117,8 +123,8 @@ const AppSidebar: React.FC = () => {
         {/* User Profile */}
         <div className="flex items-center gap-3 mb-10 overflow-hidden">
           <div className="relative min-w-12">
-            <div className="w-12 h-12 rounded-full bg-gray-300 border-2 border-[#80ED99] flex items-center justify-center overflow-hidden">
-              <UserCircle size={40} className="text-gray-500" />
+            <div>
+              <User size={40} className="text-gray-500" />
             </div>
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#134E4A]">
               4

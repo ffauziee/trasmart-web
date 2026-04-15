@@ -16,7 +16,7 @@ export default function RegisterPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: "#f0f0ee" }}
+      style={{ backgroundColor: "#e8f2ef" }}
     >
       <div
         className="flex w-full overflow-hidden shadow-2xl"
@@ -30,7 +30,7 @@ export default function RegisterPage() {
         <div
           className="flex flex-col w-full lg:w-[45%] p-8 sm:p-10"
           style={{
-            background: "linear-gradient(160deg, #fef9e6 0%, #fffdf4 100%)",
+            background: "linear-gradient(160deg, #edf7f4 0%, #f5fbf8 100%)",
           }}
         >
           {/* Logo */}
@@ -39,7 +39,7 @@ export default function RegisterPage() {
               className="inline-block bg-white text-sm font-semibold px-4 py-1.5 rounded-full shadow-sm"
               style={{ color: "#1a1a1a", letterSpacing: "-0.01em" }}
             >
-              Crextio
+              TrasMart
             </span>
           </div>
 
@@ -52,7 +52,7 @@ export default function RegisterPage() {
               Create an account
             </h1>
             <p className="text-sm" style={{ color: "#9ca3af" }}>
-              Sign up and get 30 day free trial
+              Sign up and get the rewards
             </p>
           </div>
 
@@ -70,7 +70,7 @@ export default function RegisterPage() {
               <input
                 id="fullName"
                 type="text"
-                placeholder="Amélie Laurent"
+                placeholder="Enter your full name.."
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-sm rounded-lg outline-none transition-all"
@@ -79,12 +79,8 @@ export default function RegisterPage() {
                   backgroundColor: "#ffffff",
                   color: "#111",
                 }}
-                onFocus={(e) =>
-                  (e.target.style.border = "1px solid #f5c842")
-                }
-                onBlur={(e) =>
-                  (e.target.style.border = "1px solid #e5e7eb")
-                }
+                onFocus={(e) => (e.target.style.border = "1px solid #6fa898")}
+                onBlur={(e) => (e.target.style.border = "1px solid #e5e7eb")}
               />
             </div>
 
@@ -100,7 +96,7 @@ export default function RegisterPage() {
               <input
                 id="email"
                 type="email"
-                placeholder="amélielaurent7622@gmail.com"
+                placeholder="example@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-sm rounded-lg outline-none transition-all"
@@ -109,12 +105,8 @@ export default function RegisterPage() {
                   backgroundColor: "#ffffff",
                   color: "#111",
                 }}
-                onFocus={(e) =>
-                  (e.target.style.border = "1px solid #f5c842")
-                }
-                onBlur={(e) =>
-                  (e.target.style.border = "1px solid #e5e7eb")
-                }
+                onFocus={(e) => (e.target.style.border = "1px solid #6fa898")}
+                onBlur={(e) => (e.target.style.border = "1px solid #e5e7eb")}
               />
             </div>
 
@@ -140,12 +132,8 @@ export default function RegisterPage() {
                     backgroundColor: "#ffffff",
                     color: "#111",
                   }}
-                  onFocus={(e) =>
-                    (e.target.style.border = "1px solid #f5c842")
-                  }
-                  onBlur={(e) =>
-                    (e.target.style.border = "1px solid #e5e7eb")
-                  }
+                  onFocus={(e) => (e.target.style.border = "1px solid #6fa898")}
+                  onBlur={(e) => (e.target.style.border = "1px solid #e5e7eb")}
                 />
                 <button
                   type="button"
@@ -201,7 +189,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               className="w-full py-2.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-90 active:scale-[0.98] mt-1"
-              style={{ backgroundColor: "#f5c842", color: "#1a1a1a" }}
+              style={{ backgroundColor: "#6fa898", color: "#ffffff" }}
             >
               Submit
             </button>
@@ -283,127 +271,15 @@ export default function RegisterPage() {
         </div>
 
         {/* ── RIGHT PANEL ── */}
-        <div className="hidden lg:block relative lg:w-[55%] overflow-hidden">
+        <div className="hidden  lg:block relative lg:w-[55%] overflow-hidden">
           {/* Background image */}
           <Image
             src="/register-image.svg"
-            alt="cover"
+            alt="register-image"
             fill
             className="object-cover"
             priority
           />
-          {/* Dark overlay for readability */}
-          <div
-            className="absolute inset-0"
-            style={{ backgroundColor: "rgba(0,0,0,0.28)" }}
-          />
-
-          {/* ── Floating Card 1 – Task Review ── */}
-          <div
-            className="absolute top-8 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-xl px-4 py-3 w-56"
-            style={{ zIndex: 10 }}
-          >
-            {/* Yellow dot */}
-            <div
-              className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full"
-              style={{ backgroundColor: "#f5c842" }}
-            />
-            <p className="text-xs font-bold text-gray-800 mb-0.5 pr-4">
-              Task Review With Team
-            </p>
-            <p className="text-xs font-semibold" style={{ color: "#6b7280" }}>
-              09:30am – 10:00am
-            </p>
-            <p className="text-[10px] mt-1" style={{ color: "#9ca3af" }}>
-              Repeats every week
-            </p>
-          </div>
-
-          {/* ── Week Calendar Strip ── */}
-          <div
-            className="absolute bottom-36 left-1/2 -translate-x-1/2 rounded-2xl px-4 py-3 w-72"
-            style={{
-              backgroundColor: "rgba(20,20,20,0.72)",
-              backdropFilter: "blur(6px)",
-              zIndex: 10,
-            }}
-          >
-            <div className="flex justify-between">
-              {[
-                { day: "Sun", date: 22 },
-                { day: "Mon", date: 23 },
-                { day: "Tue", date: 24 },
-                { day: "Wed", date: 25 },
-                { day: "Thu", date: 26 },
-                { day: "Fri", date: 27 },
-                { day: "Sat", date: 28 },
-              ].map(({ day, date }) => (
-                <div
-                  key={day}
-                  className="flex flex-col items-center gap-1"
-                >
-                  <span className="text-[9px] text-gray-400 font-medium">
-                    {day}
-                  </span>
-                  <span
-                    className="text-xs font-bold"
-                    style={{
-                      color: date === 25 ? "#f5c842" : "#ffffff",
-                    }}
-                  >
-                    {date}
-                  </span>
-                  {date === 25 && (
-                    <div
-                      className="w-1 h-1 rounded-full"
-                      style={{ backgroundColor: "#f5c842" }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Floating Card 2 – Daily Meeting ── */}
-          <div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-xl px-4 py-3 w-56"
-            style={{ zIndex: 10 }}
-          >
-            {/* Green dot */}
-            <div
-              className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full"
-              style={{ backgroundColor: "#22c55e" }}
-            />
-            <p className="text-xs font-bold text-gray-800 mb-0.5 pr-4">
-              Daily Meeting
-            </p>
-            <p className="text-xs font-semibold mb-2" style={{ color: "#6b7280" }}>
-              12:00pm – 01:00pm
-            </p>
-            {/* Avatar row */}
-            <div className="flex -space-x-2">
-              {[
-                "seed/av1/32/32",
-                "seed/av2/32/32",
-                "seed/av3/32/32",
-                "seed/av4/32/32",
-                "seed/av5/32/32",
-              ].map((seed, i) => (
-                <div
-                  key={i}
-                  className="w-6 h-6 rounded-full border-2 border-white overflow-hidden relative"
-                  style={{ backgroundColor: "#e5e7eb" }}
-                >
-                  {/* <Image
-                    src={`/avatars/${seed}`}
-                    alt={`avatar ${i}`}
-                    fill
-                    className="object-cover"
-                  /> */}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>
