@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Recycle, Leaf, MapPin, Bell, HandCoins  } from "lucide-react";
+import { Recycle, Leaf, MapPin, Bell, HandCoins } from "lucide-react";
 import styles from "./dashboard.module.scss";
 
 export default function DashboardPage() {
@@ -18,7 +18,7 @@ export default function DashboardPage() {
           <span className={styles.notificationBadge}></span>
         </button>
       </div>
-
+      {/* Point Wallet */}
       <div className={styles.gridContainer}>
         <div className={styles.leftColumn}>
           <div className={styles.bannerCard}>
@@ -86,7 +86,6 @@ export default function DashboardPage() {
           <div className={styles.historySection}>
             <div className={styles.historyHeader}>
               <h3 className={styles.historyTitle}>Hari Ini</h3>
-              <button className={styles.historyMoreBtn}>•••</button>
             </div>
             <div className={styles.historyContainer}>
               <div className={styles.historyItem}>
@@ -96,7 +95,8 @@ export default function DashboardPage() {
                 <div className={styles.historyInfo}>
                   <p className={styles.historyTitle}>Botol Plastik</p>
                   <p className={styles.historyMeta}>
-                    <MapPin size={12} />TrasMart Kantin TI • 16:30
+                    <MapPin size={12} />
+                    TrasMart Kantin TI • 16:30
                   </p>
                 </div>
                 <p className={styles.historyPoints}>+15 Pts</p>
@@ -108,7 +108,8 @@ export default function DashboardPage() {
                 <div className={styles.historyInfo}>
                   <p className={styles.historyTitle}>Botol Kaleng (Metal)</p>
                   <p className={styles.historyMeta}>
-                    <MapPin size={12} />TrasMart Kantin TI • 16:28
+                    <MapPin size={12} />
+                    TrasMart Kantin TI • 16:28
                   </p>
                 </div>
                 <p className={styles.historyPoints}>+20 Pts</p>

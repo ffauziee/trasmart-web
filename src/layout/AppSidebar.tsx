@@ -102,7 +102,6 @@ const AppSidebar: React.FC = () => {
             <div className={styles.profileAvatar}>
               <User size={22} />
             </div>
-            <span className={styles.profileBadge}>4</span>
           </div>
           {isOpen && (
             <div className={styles.profileInfo}>
