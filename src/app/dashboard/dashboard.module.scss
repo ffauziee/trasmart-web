@@ -1,266 +1,659 @@
-.dashboardWrapper {
-  min-height: 100vh;
-  padding: 1.5rem;
-  background: linear-gradient(155deg, #d7ecdf 0%, #c6e3d2 48%, #b8dbc8 100%);
-}
-
-.panelGrid {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-.mainPanel {
-  background: #e7f3eb;
-  border: 1px solid rgba(50, 69, 72, 0.14);
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  display: grid;
-  gap: 1rem;
-}
-
-.headerBlock h1 {
-  margin: 0.2rem 0 0.4rem;
-  color: #203335;
-  font-size: clamp(1.2rem, 1.8vw, 1.8rem);
-}
-
-.kicker {
-  margin: 0;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #52787a;
-  font-weight: 700;
-}
-
-.dateText {
-  margin: 0;
-  color: #69898b;
-  font-size: 0.9rem;
-}
-
-.chartCard,
-.historyCard,
-.summaryCard,
-.infoCard {
-  background: #f7fbf8;
-  border: 1px solid rgba(50, 69, 72, 0.12);
-  border-radius: 1rem;
+/* Main Container */
+.mainContainer {
   padding: 1rem;
+  padding-top: 4rem;
+
+  @media (min-width: 1024px) {
+    padding: 2rem;
+    padding-top: 2rem;
+  }
 }
 
-.chartTitleRow {
+/* Topbar */
+.topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  margin-bottom: 2rem;
 }
 
-.chartTitleRow h2,
-.historyCard h2,
-.summaryCard h3,
-.infoCard h4 {
+.topbarContent h2 {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #166534;
   margin: 0;
-  color: #243b3d;
+
+  @media (min-width: 1024px) {
+    font-size: 2.25rem;
+  }
 }
 
-.legend {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
+.topbarContent p {
+  color: #6b7280;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+
+  @media (min-width: 1024px) {
+    font-size: 1rem;
+  }
 }
 
-.legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: #4c6769;
-  font-size: 0.85rem;
+.notificationBtn {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  color: #166534;
+  border: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
 }
 
-.dotMetal,
-.dotNonMetal {
-  display: inline-block;
-  width: 0.7rem;
-  height: 0.7rem;
-  border-radius: 999px;
+.notificationBadge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #ef4444;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  border: 2px solid white;
 }
 
-.dotMetal {
-  background: #3f6f73;
-}
-
-.dotNonMetal {
-  background: #7ab08d;
-}
-
-.chartArea {
-  margin-top: 1rem;
-  min-height: 190px;
-  padding-top: 0.5rem;
+/* Grid Layout */
+.gridContainer {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  align-items: end;
-  gap: 0.65rem;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding-bottom: 2.5rem;
+
+  @media (min-width: 1280px) {
+    grid-template-columns: 2fr 1fr;
+  }
 }
 
-.dayGroup {
+.leftColumn {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
+  gap: 2rem;
 }
 
-.dayGroup span {
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Card Styling */
+.card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d1d5db;
+}
+
+.bannerCard {
+  @extend .card;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 2rem;
+  }
+}
+
+.bannerGradient {
+  position: absolute;
+  right: -2.5rem;
+  top: -2.5rem;
+  background: rgba(158, 207, 185, 0.1);
+  width: 10rem;
+  height: 10rem;
+  border-radius: 9999px;
+  filter: blur(3rem);
+  pointer-events: none;
+}
+
+.bannerContent {
+  z-index: 10;
+}
+
+.bannerLabel {
+  color: #9ca3af;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  margin: 0;
+}
+
+.balanceDisplay {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.balanceAmount {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #166534;
+}
+
+.balanceUnit {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #6fa898;
+}
+
+.balanceDescription {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+  margin: 0;
+}
+
+.bannerDivider {
+  height: 4rem;
+  width: 1px;
+  background: #f3f4f6;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
+}
+
+.impactCards {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  z-index: 10;
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
+}
+
+.impactCard {
+  background: #f0f7f4;
+  padding: 1rem;
+  border-radius: 1rem;
+  flex: 1;
+  border: 1px solid rgba(158, 207, 185, 0.3);
+
+  @media (min-width: 768px) {
+    flex: none;
+  }
+}
+
+.impactLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #166534;
+  margin-bottom: 0.25rem;
   font-size: 0.75rem;
-  color: #597779;
   font-weight: 600;
 }
 
-.bars {
-  height: 150px;
+.impactValue {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #166534;
+  margin: 0;
+}
+
+.impactValueSmall {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: #6b7280;
+}
+
+/* Chart Card */
+.chartCard {
+  @extend .card;
+  padding: 1.5rem;
+
+  @media (min-width: 1024px) {
+    padding: 2rem;
+  }
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.chartTitle h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #166534;
+  margin: 0;
+}
+
+.chartSubtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  margin: 0;
+}
+
+.chartSelect {
+  background: #f9fafb;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.chartBars {
   display: flex;
   align-items: flex-end;
-  gap: 0.3rem;
+  gap: 0.25rem;
+  height: 8rem;
+  margin-top: 1rem;
+
+  @media (min-width: 768px) {
+    gap: 0.5rem;
+  }
+}
+
+.barContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+
+  &:hover .bar {
+    background-color: #9ecfb9;
+  }
 }
 
 .bar {
-  width: 0.52rem;
-  border-radius: 0.42rem 0.42rem 0 0;
+  width: 100%;
+  border-radius: 0.125rem 0.125rem 0 0;
+  transition: all 0.3s;
+
+  &.active {
+    background-color: #166534;
+  }
+
+  &:not(.active) {
+    background-color: #e5e7eb;
+  }
 }
 
-.metalBar {
-  background: linear-gradient(180deg, #6e9ea2 0%, #335d61 100%);
+/* History Section */
+.historySection {
+  display: flex;
+  flex-direction: column;
 }
 
-.nonMetalBar {
-  background: linear-gradient(180deg, #a5d6b3 0%, #6fa57f 100%);
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
 }
 
-.historyList {
-  list-style: none;
-  margin: 1rem 0 0;
-  padding: 0;
-  display: grid;
-  gap: 0.75rem;
+.historyTitle {
+  font-weight: bold;
+  color: #374151;
+  margin: 0;
+}
+
+.historyMoreBtn {
+  color: #9ca3af;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    color: #4b5563;
+  }
+}
+
+.historyContainer {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f3f4f6;
+  overflow: hidden;
 }
 
 .historyItem {
-  border: 1px solid rgba(77, 103, 105, 0.15);
-  border-radius: 0.8rem;
-  background: #ffffff;
-  padding: 0.8rem;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 0.7rem;
+  padding: 1rem;
+  border-bottom: 1px solid #f9fafb;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
-.historyDot {
-  width: 0.9rem;
-  height: 0.9rem;
-  border-radius: 999px;
+.historyIconContainer {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  margin-right: 1rem;
 }
 
-.metalHistory {
-  background: #3f6f73;
+.historyIconRecycle {
+  @extend .historyIconContainer;
+  background: #6fa898;
 }
 
-.nonMetalHistory {
-  background: #7ab08d;
+.historyIconCoin {
+  @extend .historyIconContainer;
+  background: #9ecfb9;
 }
 
-.historyInfo strong {
-  display: block;
-  color: #243b3d;
+.historyInfo {
+  flex: 1;
 }
 
-.historyInfo p {
-  margin: 0.2rem 0 0;
-  color: #668486;
-  font-size: 0.82rem;
+.historyTitle {
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
 }
 
 .historyMeta {
-  text-align: right;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.125rem;
+  margin: 0;
 }
 
-.historyMeta span {
-  display: block;
-  color: #597779;
-  font-size: 0.78rem;
+.historyPoints {
+  font-weight: bold;
+  color: #166534;
+  margin: 0;
+  white-space: nowrap;
 }
 
-.historyMeta strong {
-  color: #243b3d;
+/* Right Column - Status Card */
+.statusCard {
+  @extend .card;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.sidePanel {
-  display: grid;
-  gap: 1rem;
+.statusCardBorder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0.25rem;
+  background: linear-gradient(to right, #9ecfb9, #166534);
 }
 
-.totalText {
-  margin: 0.4rem 0 1rem;
-  color: #628487;
-  font-size: 0.9rem;
+.statusTitle {
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 1rem;
 }
 
-.progressRow {
-  display: grid;
-  gap: 0.35rem;
-  margin-bottom: 0.95rem;
-}
-
-.progressHead {
+.statusMachine {
   display: flex;
   justify-content: space-between;
-  color: #3b5a5d;
-  font-size: 0.88rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
 }
 
-.progressTrack {
-  height: 0.45rem;
-  border-radius: 999px;
-  overflow: hidden;
-  background: #dcece2;
-}
-
-.progressFill {
-  height: 100%;
-  border-radius: 999px;
-}
-
-.progressMetal {
-  background: linear-gradient(90deg, #7db0b4 0%, #3f6f73 100%);
-}
-
-.progressNonMetal {
-  background: linear-gradient(90deg, #a0d2ae 0%, #6fa57f 100%);
-}
-
-.infoLabel {
+.machineName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
   margin: 0;
-  color: #5f8487;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 700;
 }
 
-.infoCard p {
-  margin: 0.55rem 0 0;
-  color: #5d7d7f;
+.onlineBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #166534;
+  background: #f0f7f4;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.pulseIndicator {
+  position: relative;
+  display: flex;
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.pulsePing {
+  position: absolute;
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: #6fa898;
+  opacity: 0.75;
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.pulseDot {
+  position: relative;
+  display: inline-flex;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: #6fa898;
+}
+
+.capacityBar {
+  width: 100%;
+  background: #f3f4f6;
+  border-radius: 9999px;
+  height: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.capacityFill {
+  background: #166534;
+  height: 0.5rem;
+  border-radius: 9999px;
+  transition: all 2s;
+}
+
+.capacityText {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+  text-align: right;
+  margin: 0;
+}
+
+/* Points Source Card */
+.pointsSourceCard {
+  @extend .card;
+  padding: 1.5rem;
+}
+
+.pointsSourceTitle {
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.pointsSourceList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.pointsSourceItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pointsSourceHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.pointsSourceLabel {
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.pointsSourceAmount {
+  font-weight: bold;
+  color: #166534;
+}
+
+.pointsProgressBar {
+  width: 100%;
+  background: #f3f4f6;
+  border-radius: 9999px;
+  height: 0.5rem;
+}
+
+.pointsProgressFill {
+  height: 0.5rem;
+  border-radius: 9999px;
+
+  &.plastic {
+    background: #6fa898;
+  }
+
+  &.metal {
+    background: #9ecfb9;
+  }
+}
+
+/* CTA Card */
+.ctaCard {
+  background: #166534;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaIcon {
+  position: absolute;
+  right: -1.25rem;
+  bottom: -1.25rem;
+  opacity: 0.1;
+}
+
+.ctaTitle {
+  font-weight: bold;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 10;
+  margin: 0;
+}
+
+.ctaDescription {
+  font-size: 0.875rem;
+  color: #9ecfb9;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 10;
   line-height: 1.5;
+  margin: 0;
 }
 
-@media (min-width: 1024px) {
-  .panelGrid {
-    grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1fr);
-    gap: 1.2rem;
+.ctaProgressBar {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+  height: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 10;
+}
+
+.ctaProgressFill {
+  background: #9ecfb9;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+.ctaButton {
+  width: 100%;
+  background: #9ecfb9;
+  color: #166534;
+  font-weight: bold;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #6fa898;
+    color: white;
+  }
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
   }
 }

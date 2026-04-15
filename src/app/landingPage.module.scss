@@ -87,17 +87,17 @@ $desktop: 1024px;
         color: $gray-700;
 
         &:hover {
-          color: $primary-green;
+          color: $dark-green;
         }
       }
 
       &.signUp {
-        background-color: $primary-green;
+        background-color: $dark-green;
         color: $white;
         border-radius: 0.5rem;
 
         &:hover {
-          background-color: $dark-green;
+          transform: scale(1.05);
         }
       }
     }
@@ -139,7 +139,7 @@ $desktop: 1024px;
     }
 
     .highlight {
-      color: $primary-green;
+      color: $dark-green;
     }
   }
 
@@ -165,7 +165,7 @@ $desktop: 1024px;
     display: inline-block;
 
     &.primaryBtn {
-      background-color: $primary-green;
+      background-color: $dark-green;
       color: $white;
 
       &:hover {
@@ -174,8 +174,8 @@ $desktop: 1024px;
     }
 
     &.secondaryBtn {
-      border: 2px solid $primary-green;
-      color: $primary-green;
+      border: 2px solid $dark-green;
+      color: $dark-green;
       background-color: transparent;
 
       &:hover {

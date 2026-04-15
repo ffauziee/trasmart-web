@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import styles from "./register.module.scss";
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
@@ -14,57 +15,24 @@ export default function RegisterPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: "#e8f2ef" }}
-    >
-      <div
-        className="flex w-full overflow-hidden shadow-2xl"
-        style={{
-          maxWidth: "960px",
-          borderRadius: "1.75rem",
-          minHeight: "600px",
-        }}
-      >
+    <div className={styles.registerContainer}>
+      <div className={styles.registerWrapper}>
         {/* ── LEFT PANEL ── */}
-        <div
-          className="flex flex-col w-full lg:w-[45%] p-8 sm:p-10"
-          style={{
-            background: "linear-gradient(160deg, #edf7f4 0%, #f5fbf8 100%)",
-          }}
-        >
+        <div className={styles.leftPanel}>
           {/* Logo */}
-          <div className="mb-8">
-            <span
-              className="inline-block bg-white text-sm font-semibold px-4 py-1.5 rounded-full shadow-sm"
-              style={{ color: "#1a1a1a", letterSpacing: "-0.01em" }}
-            >
-              TrasMart
-            </span>
-          </div>
+          <div className={styles.logoBadge}>TrasMart</div>
 
           {/* Heading */}
-          <div className="mb-8">
-            <h1
-              className="text-2xl font-bold mb-1.5"
-              style={{ color: "#111", letterSpacing: "-0.02em" }}
-            >
-              Create an account
-            </h1>
-            <p className="text-sm" style={{ color: "#9ca3af" }}>
-              Sign up and get the rewards
-            </p>
+          <div className={styles.headingSection}>
+            <h1 className={styles.heading}>Create an account</h1>
+            <p className={styles.subheading}>Sign up and get the rewards</p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-1">
+          <form onSubmit={handleSubmit} className={styles.form}>
             {/* Full Name */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="fullName"
-                className="text-xs font-semibold"
-                style={{ color: "#374151" }}
-              >
+            <div className={styles.formGroup}>
+              <label htmlFor="fullName" className={styles.label}>
                 Full name
               </label>
               <input
@@ -73,24 +41,13 @@ export default function RegisterPage() {
                 placeholder="Enter your full name.."
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg outline-none transition-all"
-                style={{
-                  border: "1px solid #e5e7eb",
-                  backgroundColor: "#ffffff",
-                  color: "#111",
-                }}
-                onFocus={(e) => (e.target.style.border = "1px solid #6fa898")}
-                onBlur={(e) => (e.target.style.border = "1px solid #e5e7eb")}
+                className={styles.input}
               />
             </div>
 
             {/* Email */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="email"
-                className="text-xs font-semibold"
-                style={{ color: "#374151" }}
-              >
+            <div className={styles.formGroup}>
+              <label htmlFor="email" className={styles.label}>
                 Email
               </label>
               <input
@@ -99,46 +56,29 @@ export default function RegisterPage() {
                 placeholder="example@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg outline-none transition-all"
-                style={{
-                  border: "1px solid #e5e7eb",
-                  backgroundColor: "#ffffff",
-                  color: "#111",
-                }}
-                onFocus={(e) => (e.target.style.border = "1px solid #6fa898")}
-                onBlur={(e) => (e.target.style.border = "1px solid #e5e7eb")}
+                className={styles.input}
               />
             </div>
 
             {/* Password */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="password"
-                className="text-xs font-semibold"
-                style={{ color: "#374151" }}
-              >
+            <div className={styles.formGroup}>
+              <label htmlFor="password" className={styles.label}>
                 Password
               </label>
-              <div className="relative">
+              <div className={styles.passwordContainer}>
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3.5 py-2.5 pr-10 text-sm rounded-lg outline-none transition-all"
-                  style={{
-                    border: "1px solid #e5e7eb",
-                    backgroundColor: "#ffffff",
-                    color: "#111",
-                  }}
-                  onFocus={(e) => (e.target.style.border = "1px solid #6fa898")}
-                  onBlur={(e) => (e.target.style.border = "1px solid #e5e7eb")}
+                  className={styles.input}
+                  style={{ paddingRight: "2.5rem" }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className={styles.passwordToggle}
                   aria-label="Toggle password visibility"
                 >
                   {showPassword ? (
@@ -186,22 +126,14 @@ export default function RegisterPage() {
             </div>
 
             {/* Submit */}
-            <button
-              type="submit"
-              className="w-full py-2.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-90 active:scale-[0.98] mt-1"
-              style={{ backgroundColor: "#6fa898", color: "#ffffff" }}
-            >
+            <button type="submit" className={styles.submitBtn}>
               Submit
             </button>
 
             {/* Social Buttons */}
-            <div className="flex gap-3">
+            <div className={styles.socialContainer}>
               {/* Apple */}
-              <button
-                type="button"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border transition-colors hover:bg-gray-50"
-                style={{ borderColor: "#e5e7eb", color: "#111" }}
-              >
+              <button type="button" className={styles.socialBtn}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="15"
@@ -215,11 +147,7 @@ export default function RegisterPage() {
               </button>
 
               {/* Google */}
-              <button
-                type="button"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border transition-colors hover:bg-gray-50"
-                style={{ borderColor: "#e5e7eb", color: "#111" }}
-              >
+              <button type="button" className={styles.socialBtn}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="15"
@@ -248,22 +176,11 @@ export default function RegisterPage() {
             </div>
 
             {/* Bottom links */}
-            <div className="flex items-center justify-between mt-auto pt-2">
-              <p className="text-xs" style={{ color: "#9ca3af" }}>
-                Have any account?{" "}
-                <a
-                  href="#"
-                  className="underline font-medium"
-                  style={{ color: "#6b7280" }}
-                >
-                  Sign in
-                </a>
+            <div className={styles.bottomLinks}>
+              <p className={styles.bottomText}>
+                Have any account? <a href="#">Sign in</a>
               </p>
-              <a
-                href="#"
-                className="text-xs underline"
-                style={{ color: "#9ca3af" }}
-              >
+              <a href="#" className={styles.bottomLink}>
                 Terms &amp; Conditions
               </a>
             </div>
@@ -271,13 +188,13 @@ export default function RegisterPage() {
         </div>
 
         {/* ── RIGHT PANEL ── */}
-        <div className="hidden  lg:block relative lg:w-[55%] overflow-hidden">
+        <div className={styles.rightPanel}>
           {/* Background image */}
           <Image
             src="/register-image.svg"
             alt="register-image"
             fill
-            className="object-cover"
+            className={styles.rightPanelImage}
             priority
           />
         </div>
