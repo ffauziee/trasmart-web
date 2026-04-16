@@ -1,37 +1,42 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, ReactNode } from "react";
+import { useAuth, UserProfile } from "@/hooks/useAuth";
 
-export interface UserProfile {
-  fullName: string;
-  email: string;
-  phone: string;
-  address: string;
-  avatar: string;
-}
-
+//Update interface
 interface UserContextType {
-  user: UserProfile;
-  updateUser: (updatedUser: UserProfile) => void;
+  user: UserProfile | null;
+  loading: boolean;
+  error: string | null;
+  isAuthenticated: boolean;
+  updateUser: (updatedUser: Partial<UserProfile>) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export function UserProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<UserProfile>({
-    fullName: "User",
-    email: "example@gmail.com",
-    phone: "+62 812-3456-7890",
-    address: "Jl.Soekarno-Hatta No. 123, Malang",
-    avatar: "👤",
-  });
-
-  const updateUser = (updatedUser: UserProfile) => {
-    setUser(updatedUser);
-  };
+export function UserProvider({ children }: { children: ReactNode }) {
+  //Gunakan useAuth hook untuk dapat data real dari Supabase
+  const {
+    userProfile,
+    loading,
+    error,
+    isAuthenticated,
+    updateProfile,
+    signOut,
+  } = useAuth();
 
   return (
-    <UserContext.Provider value={{ user, updateUser }}>
+    <UserContext.Provider
+      value={{
+        user: userProfile,
+        loading,
+        error,
+        isAuthenticated,
+        updateUser: updateProfile, // ✅ Wrapper untuk consistency
+        signOut,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -44,3 +49,4 @@ export function useUser() {
   }
   return context;
 }
+export type { UserContextType };

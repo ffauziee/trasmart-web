@@ -13,6 +13,7 @@ import {
 import styles from "./AppSidebar.module.scss";
 import { useRouter, usePathname } from "next/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { useUser } from "@/contexts/UserContext";
 
 type NavItem = { name: string; path: string; icon: React.ReactNode };
 
@@ -37,6 +38,9 @@ const AppSidebar: React.FC = () => {
   } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
+
+  // ✅ Gunakan useUser() dari UserContext - sudah handle userProfile
+  const { user: userProfile, signOut } = useUser();
 
   const isOpen = isExpanded || isHovered || isMobileOpen;
 
@@ -102,8 +106,10 @@ const AppSidebar: React.FC = () => {
           </div>
           {isOpen && (
             <div className={styles.profileInfo}>
-              <p className={styles.profileName}>example</p>
-              <p className={styles.profileEmail}>example@gmail.com</p>
+              <p className={styles.profileName}>
+                {userProfile?.username || "Guest"}
+              </p>
+              <p className={styles.profileEmail}>{userProfile?.email}</p>
             </div>
           )}
         </div>
@@ -116,7 +122,11 @@ const AppSidebar: React.FC = () => {
           <a
             href="#"
             className={styles.logoutLink}
-            onClick={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.preventDefault();
+              signOut();
+              router.push("/auth/login");
+            }}
           >
             <span className={styles.logoutIcon}>
               <LogOut size={20} />

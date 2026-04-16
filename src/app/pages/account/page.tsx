@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import AppSidebar from "@/app/components/layout/AppSidebar";
 import {
@@ -15,40 +15,68 @@ import {
   Camera,
 } from "lucide-react";
 import styles from "./account.module.scss";
-
-interface UserProfile {
-  fullName: string;
-  email: string;
-  phone: string;
-  address: string;
-  avatar: string;
-}
+import { useUser } from "@/contexts/UserContext";
+import type { UserProfile } from "@/hooks/useAuth";
 
 export default function AccountRoute() {
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState<UserProfile>({
-    fullName: "User",
-    email: "example@gmail.com",
-    phone: "+62 812-3456-7890",
-    address: "Jl.Soekarno-Hatta No. 123, Malang",
-    avatar: "👤",
-  });
+  const [isSaving, setIsSaving] = useState(false);
+  const { user, loading, error, isAuthenticated, updateUser, signOut } =
+    useUser();
 
-  const [formData, setFormData] = useState<UserProfile>(profile);
+  // ✅ Proper type dengan nullable
+  const [formData, setFormData] = useState<Partial<UserProfile>>({});
+
+  // ✅ Update formData ketika user data loaded
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        fullName: user.fullName || "",
+        phone: user.phone || "",
+        address: user.address || "",
+        avatar: user.avatar || "",
+        city: user.city || "",
+        postal_code: user.postal_code || "",
+      });
+    }
+  }, [user]);
 
   const handleEdit = () => {
     setIsEditing(true);
-    setFormData(profile);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
+    // Reset form ke original data
+    if (user) {
+      setFormData({
+        username: user.username,
+        fullName: user.fullName,
+        phone: user.phone,
+        address: user.address,
+        avatar: user.avatar,
+        city: user.city,
+        postal_code: user.postal_code,
+      });
+    }
   };
 
-  const handleSave = () => {
-    setProfile(formData);
-    setIsEditing(false);
-    alert("Profile updated successfully!");
+  // ✅ Make async properly with better error handling
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await updateUser(formData);
+      setIsEditing(false);
+      alert("✅ Profile updated successfully!");
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Failed to update profile";
+      console.error("Save error:", errorMsg);
+      alert(`❌ Error: ${errorMsg}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleInputChange = (
@@ -60,6 +88,68 @@ export default function AccountRoute() {
       [name]: value,
     }));
   };
+
+  // ✅ Handle loading state
+  if (loading) {
+    return (
+      <SidebarProvider>
+        <div className={styles.accountLayout}>
+          <AppSidebar />
+          <main className={styles.accountContent}>
+            <div className={styles.mainContainer}>
+              <div style={{ padding: "40px", textAlign: "center" }}>
+                <p>Loading profile...</p>
+              </div>
+            </div>
+          </main>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  // ✅ Handle not authenticated
+  if (!isAuthenticated || !user) {
+    return (
+      <SidebarProvider>
+        <div className={styles.accountLayout}>
+          <AppSidebar />
+          <main className={styles.accountContent}>
+            <div className={styles.mainContainer}>
+              <div style={{ padding: "40px", textAlign: "center" }}>
+                <p>Please login to view your profile</p>
+              </div>
+            </div>
+          </main>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  // ✅ Handle error
+  if (error) {
+    return (
+      <SidebarProvider>
+        <div className={styles.accountLayout}>
+          <AppSidebar />
+          <main className={styles.accountContent}>
+            <div className={styles.mainContainer}>
+              <div
+                style={{
+                  padding: "40px",
+                  textAlign: "center",
+                  color: "#c33",
+                  background: "#fee",
+                  borderRadius: "8px",
+                }}
+              >
+                <p>Error loading profile: {error}</p>
+              </div>
+            </div>
+          </main>
+        </div>
+      </SidebarProvider>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -82,7 +172,7 @@ export default function AccountRoute() {
               <div className={styles.profileCard}>
                 <div className={styles.profileHeader}>
                   <div className={styles.avatarContainer}>
-                    <div className={styles.avatarLarge}>{profile.avatar}</div>
+                    <div className={styles.avatarLarge}>{user.avatar}</div>
                     {isEditing && (
                       <button className={styles.avatarEditBtn}>
                         <Camera size={16} />
@@ -90,8 +180,10 @@ export default function AccountRoute() {
                     )}
                   </div>
                   <div className={styles.profileBasic}>
-                    <h1 className={styles.profileName}>{profile.fullName}</h1>
-                    <p className={styles.profileRole}>Member TrasMart</p>
+                    <h1 className={styles.profileName}>{user.fullName}</h1>
+                    {user.username && (
+                      <p className={styles.profileUsername}>@{user.username}</p>
+                    )}
                   </div>
                 </div>
 
@@ -103,10 +195,18 @@ export default function AccountRoute() {
                           <User size={20} />
                         </div>
                         <div className={styles.detailContent}>
+                          <p className={styles.detailLabel}>User Name</p>
+                          <p className={styles.detailValue}>{user.username}</p>
+                        </div>
+                      </div>
+
+                      <div className={styles.detailItem}>
+                        <div className={styles.detailIcon}>
+                          <User size={20} />
+                        </div>
+                        <div className={styles.detailContent}>
                           <p className={styles.detailLabel}>Nama Lengkap</p>
-                          <p className={styles.detailValue}>
-                            {profile.fullName}
-                          </p>
+                          <p className={styles.detailValue}>{user.fullName}</p>
                         </div>
                       </div>
 
@@ -116,7 +216,11 @@ export default function AccountRoute() {
                         </div>
                         <div className={styles.detailContent}>
                           <p className={styles.detailLabel}>Email</p>
-                          <p className={styles.detailValue}>{profile.email}</p>
+                          {/* ✅ Email read-only */}
+                          <p className={styles.detailValue}>{user.email}</p>
+                          <small style={{ color: "#999" }}>
+                            Email cannot be changed here
+                          </small>
                         </div>
                       </div>
 
@@ -126,7 +230,7 @@ export default function AccountRoute() {
                         </div>
                         <div className={styles.detailContent}>
                           <p className={styles.detailLabel}>Nomor Telepon</p>
-                          <p className={styles.detailValue}>{profile.phone}</p>
+                          <p className={styles.detailValue}>{user.phone}</p>
                         </div>
                       </div>
 
@@ -136,11 +240,36 @@ export default function AccountRoute() {
                         </div>
                         <div className={styles.detailContent}>
                           <p className={styles.detailLabel}>Alamat</p>
-                          <p className={styles.detailValue}>
-                            {profile.address}
-                          </p>
+                          <p className={styles.detailValue}>{user.address}</p>
                         </div>
                       </div>
+
+                      {user.city && (
+                        <div className={styles.detailItem}>
+                          <div className={styles.detailIcon}>
+                            <MapPin size={20} />
+                          </div>
+                          <div className={styles.detailContent}>
+                            <p className={styles.detailLabel}>Kota</p>
+                            <p className={styles.detailValue}>{user.city}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {user.postal_code && (
+                        <div className={styles.detailItem}>
+                          <div className={styles.detailIcon}>
+                            <MapPin size={20} />
+                          </div>
+                          <div className={styles.detailContent}>
+                            <p className={styles.detailLabel}>Kode Pos</p>
+                            <p className={styles.detailValue}>
+                              {user.postal_code}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
                       <button className={styles.editBtn} onClick={handleEdit}>
                         <Edit size={18} />
                         Edit Profile
@@ -148,6 +277,21 @@ export default function AccountRoute() {
                     </>
                   ) : (
                     <>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="username" className={styles.label}>
+                          User Name
+                        </label>
+                        <input
+                          id="username"
+                          name="username"
+                          type="text"
+                          className={styles.input}
+                          value={formData.username || ""}
+                          onChange={handleInputChange}
+                          disabled={isSaving}
+                        />
+                      </div>
+
                       <div className={styles.formGroup}>
                         <label htmlFor="fullName" className={styles.label}>
                           Nama Lengkap
@@ -157,8 +301,9 @@ export default function AccountRoute() {
                           name="fullName"
                           type="text"
                           className={styles.input}
-                          value={formData.fullName}
+                          value={formData.fullName || ""}
                           onChange={handleInputChange}
+                          disabled={isSaving}
                         />
                       </div>
 
@@ -168,12 +313,15 @@ export default function AccountRoute() {
                         </label>
                         <input
                           id="email"
-                          name="email"
                           type="email"
                           className={styles.input}
-                          value={formData.email}
-                          onChange={handleInputChange}
+                          value={user.email}
+                          disabled
+                          style={{ opacity: 0.6 }}
                         />
+                        <small style={{ color: "#999" }}>
+                          Email cannot be changed
+                        </small>
                       </div>
 
                       <div className={styles.formGroup}>
@@ -185,8 +333,9 @@ export default function AccountRoute() {
                           name="phone"
                           type="tel"
                           className={styles.input}
-                          value={formData.phone}
+                          value={formData.phone || ""}
                           onChange={handleInputChange}
+                          disabled={isSaving}
                         />
                       </div>
 
@@ -199,18 +348,55 @@ export default function AccountRoute() {
                           name="address"
                           type="text"
                           className={styles.input}
-                          value={formData.address}
+                          value={formData.address || ""}
                           onChange={handleInputChange}
+                          disabled={isSaving}
                         />
                       </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor="city" className={styles.label}>
+                          Kota
+                        </label>
+                        <input
+                          id="city"
+                          name="city"
+                          type="text"
+                          className={styles.input}
+                          value={formData.city || ""}
+                          onChange={handleInputChange}
+                          disabled={isSaving}
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor="postal_code" className={styles.label}>
+                          Kode Pos
+                        </label>
+                        <input
+                          id="postal_code"
+                          name="postal_code"
+                          type="text"
+                          className={styles.input}
+                          value={formData.postal_code || ""}
+                          onChange={handleInputChange}
+                          disabled={isSaving}
+                        />
+                      </div>
+
                       <div className={styles.formActions}>
-                        <button className={styles.saveBtn} onClick={handleSave}>
+                        <button
+                          className={styles.saveBtn}
+                          onClick={handleSave}
+                          disabled={isSaving}
+                        >
                           <Check size={18} />
-                          Simpan Perubahan
+                          {isSaving ? "Saving..." : "Simpan Perubahan"}
                         </button>
                         <button
                           className={styles.cancelBtn}
                           onClick={handleCancel}
+                          disabled={isSaving}
                         >
                           <X size={18} />
                           Batal
@@ -244,7 +430,10 @@ export default function AccountRoute() {
                   <button className={styles.actionBtn}>
                     Preferensi Notifikasi
                   </button>
-                  <button className={styles.actionBtn + " " + styles.dangerBtn}>
+                  <button
+                    className={styles.actionBtn + " " + styles.dangerBtn}
+                    onClick={signOut}
+                  >
                     Logout
                   </button>
                 </div>
