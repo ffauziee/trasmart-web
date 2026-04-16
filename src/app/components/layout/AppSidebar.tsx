@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import Image from "next/image";
 import {
@@ -38,8 +37,6 @@ const AppSidebar: React.FC = () => {
   } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
-
-  // ✅ Gunakan useUser() dari UserContext - sudah handle userProfile
   const { user: userProfile, signOut } = useUser();
 
   const isOpen = isExpanded || isHovered || isMobileOpen;
@@ -49,7 +46,7 @@ const AppSidebar: React.FC = () => {
       {items.map((nav) => {
         const active = pathname === nav.path;
         return (
-          <li key={nav.name}>
+          <li key={nav.name} className={styles.menuItemWrapper}>
             <a
               href="#"
               className={`${styles.menuItem} ${
@@ -64,6 +61,7 @@ const AppSidebar: React.FC = () => {
               <span className={styles.menuIcon}>{nav.icon}</span>
               {isOpen && <span className={styles.menuText}>{nav.name}</span>}
             </a>
+            {!isOpen && <span className={styles.tooltip}>{nav.name}</span>}
           </li>
         );
       })}
@@ -77,8 +75,9 @@ const AppSidebar: React.FC = () => {
         className={styles.mobileToggle}
         type="button"
         onClick={toggleMobileSidebar}
+        aria-label="Toggle sidebar"
       >
-        <Menu size={24} />
+        <Menu size={22} />
       </button>
 
       {/* Sidebar */}
@@ -101,21 +100,25 @@ const AppSidebar: React.FC = () => {
         <div className={styles.profileSection}>
           <div className={styles.profileAvatarContainer}>
             <div className={styles.profileAvatar}>
-              <User size={22} />
+              <User size={20} />
             </div>
           </div>
           {isOpen && (
             <div className={styles.profileInfo}>
-              <p className={styles.profileName}>
-                {userProfile?.username || "Guest"}
-              </p>
-              <p className={styles.profileEmail}>{userProfile?.email}</p>
+              <p className={styles.profileName}>{userProfile?.fullName}</p>
+              {/* <p className={styles.profileEmail}>{userProfile?.email}</p> */}
             </div>
           )}
         </div>
 
+        {/* Nav label */}
+        {isOpen && <span className={styles.navLabel}>Menu</span>}
+
         {/* Navigation */}
         <nav className={styles.navSection}>{renderMenuItems(navItems)}</nav>
+
+        {/* Divider */}
+        <div className={styles.divider} />
 
         {/* Logout & Footer */}
         <div className={styles.logoutSection}>
