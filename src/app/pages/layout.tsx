@@ -3,7 +3,7 @@
 import React from "react";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import AppSidebar from "@/components/layout/AppSidebar";
-import styles from "./pages.module.scss"; // ← Kita buat file ini
+import styles from "./pages.module.scss";
 
 interface PagesLayoutProps {
   children: React.ReactNode;

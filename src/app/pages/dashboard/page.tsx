@@ -1,11 +1,33 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Leaf, MapPin, Bell, HandCoins } from "lucide-react";
 import styles from "./dashboard.module.scss";
 
+import { getDashboardData } from "@/lib/mock/dashboard";
+import type { DashboardData, HistoryIconVariant } from "@/types/dashboard";
+
+function getHistoryIconClass(variant: HistoryIconVariant): string {
+  return variant === "recycle" ? styles.historyIconRecycle : styles.historyIconCoin;
+}
+// ---------------------------------------------------------------------------
+// Page Component
+// ---------------------------------------------------------------------------
 export default function DashboardRoute() {
   const router = useRouter();
+  const [data, setData] = useState<DashboardData | null>(null);
+
+  useEffect(() => {
+    getDashboardData().then(setData);
+  }, []);
+
+// skeleton Loading
+  if (!data) return null;
+
+  const { wallet, cta, chart, nearestMachine, todayHistory } = data;
+
+  const pointsToGo = wallet.redemptionThreshold - wallet.totalPoints;
 
   return (
     <div className={styles.mainContainer}>
@@ -27,11 +49,12 @@ export default function DashboardRoute() {
             <div className={styles.bannerContent}>
               <p className={styles.bannerLabel}>Total Balance</p>
               <div className={styles.balanceDisplay}>
-                <span className={styles.balanceAmount}>350</span>
+                <span className={styles.balanceAmount}>{wallet.totalPoints}</span>
                 <span className={styles.balanceUnit}>Pts</span>
               </div>
               <p className={styles.balanceDescription}>
-                Bisa ditukar dengan Voucher Kantin (min. 500 Pts)
+                Bisa ditukar dengan {wallet.redemptionLabel} (min.{" "}
+                {wallet.redemptionThreshold} Pts)
               </p>
             </div>
             <div className={styles.ctaCard}>
@@ -40,12 +63,13 @@ export default function DashboardRoute() {
               </div>
               <h3 className={styles.ctaTitle}>Tukarkan Poinmu!</h3>
               <p className={styles.ctaDescription}>
-                Tinggal 150 Poin lagi untuk mendapatkan Voucher Makan Gratis.
+                Tinggal {pointsToGo} Poin lagi untuk mendapatkan{" "}
+                {cta.rewardLabel}.
               </p>
               <div className={styles.ctaProgressBar}>
                 <div
                   className={styles.ctaProgressFill}
-                  style={{ width: "70%" }}
+                  style={{ width: `${cta.progressPercent}%` }}
                 ></div>
               </div>
               <button
@@ -61,8 +85,8 @@ export default function DashboardRoute() {
           <div className={styles.chartCard}>
             <div className={styles.chartHeader}>
               <div className={styles.chartTitle}>
-                <h3>Points Earned</h3>
-                <p className={styles.chartSubtitle}>01 - 15 April 2026</p>
+                <h3>{chart.title}</h3>
+                <p className={styles.chartSubtitle}>{chart.dateRange}</p>
               </div>
               <select className={styles.chartSelect}>
                 <option>Bulan Ini</option>
@@ -70,16 +94,14 @@ export default function DashboardRoute() {
               </select>
             </div>
             <div className={styles.chartBars}>
-              {[10, 20, 15, 30, 10, 40, 25, 10, 15, 20, 35, 15, 50, 40].map(
-                (height, i) => (
-                  <div key={i} className={styles.barContainer}>
-                    <div
-                      className={`${styles.bar} ${i === 12 ? styles.active : ""}`}
-                      style={{ height: `${height}%` }}
-                    ></div>
-                  </div>
-                ),
-              )}
+              {chart.data.map((point, i) => (
+                <div key={i} className={styles.barContainer}>
+                  <div
+                    className={`${styles.bar} ${i === chart.activeBarIndex ? styles.active : ""}`}
+                    style={{ height: `${point.value}%` }}
+                  ></div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -93,22 +115,26 @@ export default function DashboardRoute() {
             </h3>
             <div>
               <div className={styles.statusMachine}>
-                <p className={styles.machineName}>TrasMart Kantin TI</p>
-                <span className={styles.onlineBadge}>
-                  <span className={styles.pulseIndicator}>
-                    <span className={styles.pulsePing}></span>
-                    <span className={styles.pulseDot}></span>
+                <p className={styles.machineName}>{nearestMachine.name}</p>
+                {nearestMachine.status === "online" && (
+                  <span className={styles.onlineBadge}>
+                    <span className={styles.pulseIndicator}>
+                      <span className={styles.pulsePing}></span>
+                      <span className={styles.pulseDot}></span>
+                    </span>
+                    Online
                   </span>
-                  Online
-                </span>
+                )}
               </div>
               <div className={styles.capacityBar}>
                 <div
                   className={styles.capacityFill}
-                  style={{ width: "45%" }}
+                  style={{ width: `${nearestMachine.capacityPercent}%` }}
                 ></div>
               </div>
-              <p className={styles.capacityText}>Kapasitas: 45%</p>
+              <p className={styles.capacityText}>
+                Kapasitas: {nearestMachine.capacityPercent}%
+              </p>
             </div>
           </div>
 
@@ -117,32 +143,21 @@ export default function DashboardRoute() {
               <h3 className={styles.historyTitle}>Hari Ini</h3>
             </div>
             <div className={styles.historyContainer}>
-              <div className={styles.historyItem}>
-                <div className={styles.historyIconRecycle}>
-                  <HandCoins size={20} />
+              {todayHistory.map((entry) => (
+                <div key={entry.id} className={styles.historyItem}>
+                  <div className={getHistoryIconClass(entry.iconVariant)}>
+                    <HandCoins size={20} />
+                  </div>
+                  <div className={styles.historyInfo}>
+                    <p className={styles.historyTitle}>{entry.label}</p>
+                    <p className={styles.historyMeta}>
+                      <MapPin size={12} />
+                      {entry.machineName} • {entry.time}
+                    </p>
+                  </div>
+                  <p className={styles.historyPoints}>+{entry.points} Pts</p>
                 </div>
-                <div className={styles.historyInfo}>
-                  <p className={styles.historyTitle}>Botol Plastik</p>
-                  <p className={styles.historyMeta}>
-                    <MapPin size={12} />
-                    TrasMart Kantin TI • 16:30
-                  </p>
-                </div>
-                <p className={styles.historyPoints}>+15 Pts</p>
-              </div>
-              <div className={styles.historyItem}>
-                <div className={styles.historyIconCoin}>
-                  <HandCoins size={20} />
-                </div>
-                <div className={styles.historyInfo}>
-                  <p className={styles.historyTitle}>Botol Kaleng (Metal)</p>
-                  <p className={styles.historyMeta}>
-                    <MapPin size={12} />
-                    TrasMart Kantin TI • 16:28
-                  </p>
-                </div>
-                <p className={styles.historyPoints}>+20 Pts</p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
