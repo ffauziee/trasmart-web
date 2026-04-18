@@ -1,4 +1,55 @@
-// types/dashboard.types.ts
+// =============================================================================
+// RAW DATA(snake_case)
+// =============================================================================
+
+export interface RawTransaction {
+  id: string;
+  user_id: string;
+  category_id: string;
+  machine_id: string | null;
+  weight_kg: number;
+  points_earned: number;
+  created_at: string;
+  status: string;
+  trash_categories: {
+    name: string;
+    icon_variant: HistoryIconVariant;
+  };
+  machines: {
+    name: string;
+    location_label: string;
+  } | null;
+}
+
+export interface RawMachine {
+  id: string;
+  name: string;
+  location_label: string;
+  latitude: number | null;
+  longitude: number | null;
+  status: MachineStatus;
+  capacity_percent: number;
+  last_ping_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RawReward {
+  id: string;
+  name: string;
+  description: string;
+  points_required: number;
+  image_url: string | null;
+  quantity: number;
+  created_at: string;
+}
+
+// =============================================================================
+// UI (camelCase)
+// =============================================================================
+
+export type MachineStatus = "online" | "offline" | "maintenance";
+export type HistoryIconVariant = "recycle" | "coin";
 
 export interface WalletInfo {
   totalPoints: number;
@@ -13,31 +64,30 @@ export interface CtaInfo {
 }
 
 export interface ChartDataPoint {
-  value: number; // 0–100, represents bar height percentage
+  date: string; // "YYYY-MM-DD"
+  rawValue: number; // total poin di hari tersebut
+  heightPercent: number; 
 }
 
 export interface ChartInfo {
   title: string;
   dateRange: string;
-  activeBarIndex: number;
   data: ChartDataPoint[];
 }
 
-export type MachineStatus = "online" | "offline" | "maintenance";
-
 export interface NearestMachine {
   name: string;
+  locationLabel: string;
   status: MachineStatus;
   capacityPercent: number;
 }
 
-export type HistoryIconVariant = "recycle" | "coin";
-
 export interface HistoryEntry {
   id: string;
   label: string;
-  machineName: string;
-  time: string; // e.g. "16:30"
+  machineName: string | null;
+  machineLocation: string | null;
+  time: string;
   points: number;
   iconVariant: HistoryIconVariant;
 }
@@ -46,6 +96,7 @@ export interface DashboardData {
   wallet: WalletInfo;
   cta: CtaInfo;
   chart: ChartInfo;
-  nearestMachine: NearestMachine;
+  nearestMachine: NearestMachine | null;
   todayHistory: HistoryEntry[];
+  allTransactionsByDate: Record<string, HistoryEntry[]>;
 }
