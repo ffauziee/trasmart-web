@@ -1,8 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import NotificationBell from "@/components/layout/NotificationBell";
 import styles from "./masukkan-kode.module.scss";
+import PageTopbar from "@/components/layout/PageTopbar";
 
 export default function MasukkanKodeRoute() {
   const [code, setCode] = useState("");
@@ -26,16 +26,14 @@ export default function MasukkanKodeRoute() {
 
   return (
     <div className={styles.mainContainer}>
-      <div className={styles.topbar}>
-        <div className={styles.topbarContent}>
-          <h2>Masukkan Kode</h2>
-          <p>Masukkan kode yang kamu miliki lalu submit.</p>
-        </div>
-        <NotificationBell
-          buttonClassName={styles.notificationBtn}
-          badgeClassName={styles.notificationBadge}
-        />
-      </div>
+      <PageTopbar
+        title="Masukkan Kode"
+        description="Masukkan kode yang kamu miliki lalu submit."
+        topbarClassName={styles.topbar}
+        topbarContentClassName={styles.topbarContent}
+        notificationBtnClassName={styles.notificationBtn}
+        notificationBadgeClassName={styles.notificationBadge}
+      />
 
       <section className={styles.formCard}>
         <h3>Input Kode</h3>

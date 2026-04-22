@@ -1,18 +1,17 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Leaf, MapPin, HandCoins } from "lucide-react";
 import styles from "./dashboard.module.scss";
-import NotificationBell from "@/components/layout/NotificationBell";
+import PageTopbar from "@/components/layout/PageTopbar";
 
 import { getDashboardData, formatDisplayDate } from "@/lib/mock/dashboard";
 import type {
-  DashboardData,
   HistoryEntry,
   HistoryIconVariant,
 } from "@/types/dashboard";
-import { createClient } from "@/lib/utils/supabase/client";
+import { createClient } from "@/lib/utils/supabase/server";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -32,48 +31,50 @@ function getTodayString(): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+export const revalidate = 0;
+
 // ---------------------------------------------------------------------------
 // Page Component
 // ---------------------------------------------------------------------------
 
-export default function DashboardRoute() {
-  const router = useRouter();
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>(getTodayString());
+export default async function DashboardRoute({
+  searchParams,
+}: {
+  searchParams?: Promise<{ date?: string }>;
+}) {
+  await connection();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return router.push("/login");
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      try {
-        const dashboardData = await getDashboardData(user.id);
-        setData(dashboardData);
-        const lastDate =
-          dashboardData.chart.data.at(-1)?.date ?? getTodayString();
-        setSelectedDate(lastDate);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Terjadi kesalahan");
-      }
-    };
-    fetchData();
-  }, [router]);
+  if (!user) {
+    redirect("/auth/login");
+  }
 
-  if (!data && !error) return null;
-
-  if (error) {
+  let data;
+  try {
+    data = await getDashboardData(user.id, supabase);
+  } catch (err) {
     return (
       <div className={styles.mainContainer}>
-        <p>Gagal memuat data: {error}</p>
+        <p>
+          Gagal memuat data: {err instanceof Error ? err.message : "Terjadi kesalahan"}
+        </p>
       </div>
     );
   }
 
-  const { wallet, cta, chart, nearestMachine, allTransactionsByDate } = data!;
+  const { wallet, cta, chart, nearestMachine, allTransactionsByDate } = data;
+  const params = await searchParams;
+  const fallbackDate = chart.data.at(-1)?.date ?? getTodayString();
+  const requestedDate = params?.date;
+  const selectedDate =
+    requestedDate && allTransactionsByDate[requestedDate]
+      ? requestedDate
+      : fallbackDate;
 
   const pointsToGo = wallet.redemptionThreshold - wallet.totalPoints;
   const isToday = selectedDate === getTodayString();
@@ -84,16 +85,14 @@ export default function DashboardRoute() {
 
   return (
     <div className={styles.mainContainer}>
-      <div className={styles.topbar}>
-        <div className={styles.topbarContent}>
-          <h2>Points Wallet</h2>
-          <p>Pantau poin dan riwayat setoran sampahmu di sini.</p>
-        </div>
-        <NotificationBell
-          buttonClassName={styles.notificationBtn}
-          badgeClassName={styles.notificationBadge}
-        />
-      </div>
+      <PageTopbar
+        title="Points Wallet"
+        description="Pantau poin dan riwayat setoran sampahmu di sini."
+        topbarClassName={styles.topbar}
+        topbarContentClassName={styles.topbarContent}
+        notificationBtnClassName={styles.notificationBtn}
+        notificationBadgeClassName={styles.notificationBadge}
+      />
 
       <div className={styles.gridContainer}>
         <div className={styles.leftColumn}>
@@ -129,13 +128,9 @@ export default function DashboardRoute() {
                   style={{ width: `${cta.progressPercent}%` }}
                 ></div>
               </div>
-              <button
-                type="button"
-                className={styles.ctaButton}
-                onClick={() => router.push("/reward")}
-              >
+              <Link href="/reward" className={styles.ctaButton}>
                 Lihat Katalog Hadiah
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -151,12 +146,11 @@ export default function DashboardRoute() {
             </div>
             <div className={styles.chartBars}>
               {chart.data.map((point) => (
-                <div
+                <Link
                   key={point.date}
+                  href={`/dashboard?date=${point.date}`}
                   className={styles.barContainer}
-                  onClick={() => setSelectedDate(point.date)}
                   title={`${formatDisplayDate(point.date)}: ${point.rawValue} Pts`}
-                  style={{ cursor: "pointer" }}
                 >
                   {/* Label tanggal */}
                   <div
@@ -185,7 +179,7 @@ export default function DashboardRoute() {
                       },
                     )}
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

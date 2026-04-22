@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/utils/supabase/client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   DashboardData,
   RawTransaction,
@@ -9,10 +9,6 @@ import type {
   HistoryEntry,
   ChartDataPoint,
 } from "@/types/dashboard";
-
-type RawUserRedemptionWithReward = {
-  rewards: { points_required: number } | { points_required: number }[] | null;
-};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -73,7 +69,7 @@ export function formatDisplayDate(dateStr: string): string {
 // ---------------------------------------------------------------------------
 
 async function fetchProfilePoints(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   userId: string
 ): Promise<number> {
   const { data, error } = await supabase
@@ -87,7 +83,7 @@ async function fetchProfilePoints(
 }
 
 async function fetchNextReward(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   totalPoints: number
 ): Promise<RawReward | null> {
   const { data, error } = await supabase
@@ -104,7 +100,7 @@ async function fetchNextReward(
 
 // Fetch semua transaksi bulan ini sekaligus — digunakan untuk chart DAN history per hari
 async function fetchMonthTransactions(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   userId: string
 ): Promise<RawTransaction[]> {
   const startOfMonth = new Date();
@@ -134,7 +130,7 @@ async function fetchMonthTransactions(
 }
 
 async function fetchNearestMachine(
-  supabase: ReturnType<typeof createClient>
+  supabase: SupabaseClient
 ): Promise<RawMachine | null> {
   const { data, error } = await supabase
     .from("machines")
@@ -180,9 +176,10 @@ function transactionsToHistoryEntries(transactions: RawTransaction[]): HistoryEn
 // Public API
 // ---------------------------------------------------------------------------
 
-export async function getDashboardData(userId: string): Promise<DashboardData> {
-  const supabase = createClient();
-
+export async function getDashboardData(
+  userId: string,
+  supabase: SupabaseClient
+): Promise<DashboardData> {
   const [profilePoints, monthTransactions, machine] = await Promise.all([
     fetchProfilePoints(supabase, userId),
     fetchMonthTransactions(supabase, userId),
