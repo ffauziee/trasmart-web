@@ -10,7 +10,7 @@ import type {
   RewardCategory,
   RedeemedRewardItem,
 } from "@/types/reward";
-import NotificationBell from "@/components/layout/NotificationBell";
+import PageTopbar from "@/components/layout/PageTopbar";
 
 function formatRedeemedDate(isoString: string): string {
   return new Intl.DateTimeFormat("id-ID", {
@@ -191,16 +191,14 @@ export default function RewardRoute() {
         </div>
       )}
 
-      <div className={styles.topbar}>
-        <div className={styles.topbarContent}>
-          <h2>Reward Shop</h2>
-          <p>Tukarkan poinmu dengan reward menarik!</p>
-        </div>
-        <NotificationBell
-          buttonClassName={styles.notificationBtn}
-          badgeClassName={styles.notificationBadge}
-        />
-      </div>
+      <PageTopbar
+        title="Reward Shop"
+        description="Tukarkan poinmu dengan reward menarik!"
+        topbarClassName={styles.topbar}
+        topbarContentClassName={styles.topbarContent}
+        notificationBtnClassName={styles.notificationBtn}
+        notificationBadgeClassName={styles.notificationBadge}
+      />
 
       <div className={styles.pointsCard}>
         <div className={styles.pointsContent}>

@@ -14,8 +14,8 @@ import {
 import styles from "./account.module.scss";
 import { useUser } from "@/contexts/UserContext";
 import type { UserProfile } from "@/hooks/useAuth";
-import NotificationBell from "@/components/layout/NotificationBell";
 import { getUserPointSummary } from "@/lib/mock/points";
+import PageTopbar from "@/components/layout/PageTopbar";
 
 export default function AccountRoute() {
   const [isEditing, setIsEditing] = useState(false);
@@ -160,16 +160,14 @@ export default function AccountRoute() {
 
   return (
     <div className={styles.mainContainer}>
-      <div className={styles.topbar}>
-        <div className={styles.topbarContent}>
-          <h2>My Account</h2>
-          <p>Kelola informasi profil akun kamu</p>
-        </div>
-        <NotificationBell
-          buttonClassName={styles.notificationBtn}
-          badgeClassName={styles.notificationBadge}
-        />
-      </div>
+      <PageTopbar
+        title="My Account"
+        description="Kelola informasi profil akun kamu"
+        topbarClassName={styles.topbar}
+        topbarContentClassName={styles.topbarContent}
+        notificationBtnClassName={styles.notificationBtn}
+        notificationBadgeClassName={styles.notificationBadge}
+      />
 
       <div className={styles.contentWrapper}>
         <div className={styles.profileCard}>
