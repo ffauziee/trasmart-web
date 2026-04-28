@@ -5,7 +5,6 @@
 #include <LiquidCrystal_I2C.h>
 #include "secrets.h"
 
-// Fallback jika secrets.h tidak ada
 #ifndef SECRETS_H
 #define SECRETS_H
 const char* ssid             = "WIFI_NAME";
