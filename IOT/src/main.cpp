@@ -3,15 +3,22 @@
 #include <PubSubClient.h>
 #include <ESP32Servo.h>
 #include <LiquidCrystal_I2C.h>
+#include "secrets.h"
 
-// --- KONFIGURASI WIFI & MQTT ---
-const char* ssid = "JTI-POLINEMA";
-const char* password = "jtifast!";
+// Fallback jika secrets.h tidak ada
+#ifndef SECRETS_H
+#define SECRETS_H
+const char* ssid             = "WIFI_NAME";
+const char* password         = "WIFI_PASSWORD";
+const char* supabase_url     = "https://YOUR_PROJECT.supabase.co";
+const char* supabase_key     = "YOUR_PUBLISHABLE_KEY";
+const char* MACHINE_ID       = "YOUR_MACHINE_UUID";
+const char* CATEGORY_LOGAM   = "YOUR_UUID_LOGAM";
+const char* CATEGORY_PLASTIK = "YOUR_UUID_PLASTIK";
+#endif
+
+// MQTT Broker (bukan secret)
 const char* mqtt_server = "broker.hivemq.com";
-
-// GANTI "ID_PROYEK_KAMU" dengan ID asli dari dashboard Supabase kelompokmu
-const char* supabase_url = "https://zvutdbjkfqstmlpxvqzh.supabase.co";
-const char* supabase_key = "sb_publishable_kDHEK_JKfp2kg52VSJ4YBQ_iDaOXiow";
 
 // --- DEFINISI PIN ---
 #define PIN_TRIG 5
@@ -147,36 +154,87 @@ void loop() {
   delay(200);
 }
 
-// --- TARUH DI PALING BAWAH KODE ---
+// --- FUNGSI KIRIM TRANSAKSI KE SUPABASE ---
 void kirimKeSupabase(String jenis, int poin) {
-  if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    http.begin("https://zvutdbjkfqstmlpxvqzh.supabase.co/rest/v1/transactions");
-    
-    http.addHeader("Content-Type", "application/json");
-    http.addHeader("apikey", supabase_key);
-    http.addHeader("Authorization", "Bearer " + String(supabase_key));
-
-    // AMBIL UUID DARI DASHBOARD SUPABASE KAMU
-    String category_id = (jenis == "LOGAM") ? "PASTE_UUID_KATEGORI_LOGAM" : "PASTE_UUID_KATEGORI_PLASTIK";
-    String machine_id = "PASTE_UUID_MESIN_KAMU"; 
-
-    // Payload ini yang akan dibaca oleh Database Trigger untuk menambah poin user
-    String jsonPayload = "{"
-      "\"machine_id\":\"" + machine_id + "\","
-      "\"category_id\":\"" + category_id + "\","
-      "\"points_earned\":" + String(poin) + ","
-      "\"status\":\"completed\""
-    "}";
-    
-    int httpResponseCode = http.POST(jsonPayload);
-    
-    // Debugging di Serial Monitor
-    if (httpResponseCode > 0) {
-      Serial.printf("Supabase OK: %d\n", httpResponseCode);
-    } else {
-      Serial.printf("Supabase ERROR: %s\n", http.errorToString(httpResponseCode).c_str());
-    }
-    http.end();
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi tidak terhubung!");
+    return;
   }
+
+  HTTPClient http;
+
+  // ========================================
+  // STEP 1: Ambil current_user_id dari mesin
+  // ========================================
+  String getUrl = String(supabase_url)
+    + "/rest/v1/machines?id=eq." + String(MACHINE_ID)
+    + "&select=current_user_id";
+
+  http.begin(getUrl);
+  http.addHeader("apikey", supabase_key);
+  http.addHeader("Authorization", "Bearer " + String(supabase_key));
+
+  int getCode = http.GET();
+  String userId = "";
+
+  if (getCode == 200) {
+    String resp = http.getString();
+    Serial.println("GET machines response: " + resp);
+
+    // Parse JSON
+    int start = resp.indexOf("\"current_user_id\":\"") + 19;
+    int end = resp.indexOf("\"", start);
+    if (start > 19 && end > start) {
+      userId = resp.substring(start, end);
+    }
+  } else {
+    Serial.printf("GET machines ERROR: %d\n", getCode);
+  }
+  http.end();
+
+  // Cek apakah ada user yang terpair
+  if (userId == "" || userId == "null") {
+    Serial.println("ERROR: Tidak ada user yang terpair dengan mesin ini!");
+    lcd.clear();
+    lcd.print("Error: No User");
+    lcd.setCursor(0, 1);
+    lcd.print("Pair dulu!");
+    delay(3000);
+    return;
+  }
+
+  Serial.println("User ID ditemukan: " + userId);
+
+  // ========================================
+  // STEP 2: Kirim transaksi dengan user_id
+  // ========================================
+  String category_id = (jenis == "LOGAM") 
+    ? String(CATEGORY_LOGAM) 
+    : String(CATEGORY_PLASTIK);
+
+  http.begin(String(supabase_url) + "/rest/v1/transactions");
+  http.addHeader("Content-Type", "application/json");
+  http.addHeader("apikey", supabase_key);
+  http.addHeader("Authorization", "Bearer " + String(supabase_key));
+  http.addHeader("Prefer", "return=minimal");
+
+  String jsonPayload = "{"
+    "\"user_id\":\"" + userId + "\","
+    "\"machine_id\":\"" + String(MACHINE_ID) + "\","
+    "\"category_id\":\"" + category_id + "\","
+    "\"points_earned\":" + String(poin) + ","
+    "\"status\":\"completed\""
+  "}";
+
+  Serial.println("Payload: " + jsonPayload);
+
+  int postCode = http.POST(jsonPayload);
+
+  if (postCode == 201) {
+    Serial.println("✅ Transaksi berhasil dikirim!");
+  } else {
+    Serial.printf("❌ POST Error: %d\n", postCode);
+    Serial.println(http.getString());
+  }
+  http.end();
 }

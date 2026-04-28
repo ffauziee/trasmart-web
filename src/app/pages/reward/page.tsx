@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import styles from "./reward.module.scss";
 import { createClient } from "@/lib/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { getRewardData, redeemReward } from "@/lib/mock/reward";
+import { getRewardData, redeemReward } from "@/lib/data/reward";
 import type {
   RewardItem,
   RewardCategory,
@@ -47,10 +47,7 @@ export default function RewardRoute() {
   } | null>(null);
   const redeemedPageSize = 6;
 
-  const showToast = (
-    type: "success" | "error",
-    message: string,
-  ): void => {
+  const showToast = (type: "success" | "error", message: string): void => {
     setToast({ type, message });
     window.setTimeout(() => setToast(null), 2800);
   };
@@ -121,7 +118,9 @@ export default function RewardRoute() {
             : item,
         ),
       );
-      setRedeemedRewards((prev) => [result.redeemedReward, ...prev].slice(0, 20));
+      setRedeemedRewards((prev) =>
+        [result.redeemedReward, ...prev].slice(0, 20),
+      );
       setRedeemedPage(1);
 
       window.dispatchEvent(
@@ -166,7 +165,10 @@ export default function RewardRoute() {
   const clampedRedeemedPage = Math.min(redeemedPage, redeemedTotalPages);
   const redeemedStart = (clampedRedeemedPage - 1) * redeemedPageSize;
   const redeemedEnd = redeemedStart + redeemedPageSize;
-  const visibleRedeemedRewards = redeemedRewards.slice(redeemedStart, redeemedEnd);
+  const visibleRedeemedRewards = redeemedRewards.slice(
+    redeemedStart,
+    redeemedEnd,
+  );
 
   return (
     <div className={styles.mainContainer}>
@@ -299,19 +301,23 @@ export default function RewardRoute() {
           <>
             <div className={styles.redeemedList}>
               {visibleRedeemedRewards.map((item) => (
-              <article key={item.id} className={styles.redeemedCard}>
-                <div className={styles.redeemedImage}>{item.image}</div>
-                <div className={styles.redeemedContent}>
-                  <p className={styles.redeemedName}>{item.name}</p>
-                  <p className={styles.redeemedDescription}>{item.description}</p>
-                  <div className={styles.redeemedMeta}>
-                    <span className={styles.redeemedPoints}>-{item.points} pts</span>
-                    <span className={styles.redeemedDate}>
-                      {formatRedeemedDate(item.redeemedAt)}
-                    </span>
+                <article key={item.id} className={styles.redeemedCard}>
+                  <div className={styles.redeemedImage}>{item.image}</div>
+                  <div className={styles.redeemedContent}>
+                    <p className={styles.redeemedName}>{item.name}</p>
+                    <p className={styles.redeemedDescription}>
+                      {item.description}
+                    </p>
+                    <div className={styles.redeemedMeta}>
+                      <span className={styles.redeemedPoints}>
+                        -{item.points} pts
+                      </span>
+                      <span className={styles.redeemedDate}>
+                        {formatRedeemedDate(item.redeemedAt)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </article>
+                </article>
               ))}
             </div>
 
@@ -320,7 +326,9 @@ export default function RewardRoute() {
                 <button
                   type="button"
                   className={styles.redeemedPageBtn}
-                  onClick={() => setRedeemedPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setRedeemedPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={clampedRedeemedPage === 1}
                 >
                   Sebelumnya

@@ -14,7 +14,7 @@ import {
 import styles from "./account.module.scss";
 import { useUser } from "@/contexts/UserContext";
 import type { UserProfile } from "@/hooks/useAuth";
-import { getUserPointSummary } from "@/lib/mock/points";
+import { getUserPointSummary } from "@/lib/data/points";
 import PageTopbar from "@/components/layout/PageTopbar";
 
 export default function AccountRoute() {

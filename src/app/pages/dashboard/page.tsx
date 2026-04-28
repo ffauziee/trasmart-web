@@ -6,11 +6,8 @@ import { Leaf, MapPin, HandCoins } from "lucide-react";
 import styles from "./dashboard.module.scss";
 import PageTopbar from "@/components/layout/PageTopbar";
 
-import { getDashboardData, formatDisplayDate } from "@/lib/mock/dashboard";
-import type {
-  HistoryEntry,
-  HistoryIconVariant,
-} from "@/types/dashboard";
+import { getDashboardData, formatDisplayDate } from "@/lib/data/dashboard";
+import type { HistoryEntry, HistoryIconVariant } from "@/types/dashboard";
 import { createClient } from "@/lib/utils/supabase/server";
 
 // ---------------------------------------------------------------------------
@@ -61,7 +58,8 @@ export default async function DashboardRoute({
     return (
       <div className={styles.mainContainer}>
         <p>
-          Gagal memuat data: {err instanceof Error ? err.message : "Terjadi kesalahan"}
+          Gagal memuat data:{" "}
+          {err instanceof Error ? err.message : "Terjadi kesalahan"}
         </p>
       </div>
     );

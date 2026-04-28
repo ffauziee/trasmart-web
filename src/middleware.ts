@@ -21,8 +21,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(`[Middleware] Path: ${pathname}, Has User: ${!!user}`);
-
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route),
   );
