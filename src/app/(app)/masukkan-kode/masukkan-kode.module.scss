@@ -148,3 +148,115 @@
   font-size: 0.88rem;
   font-weight: 600;
 }
+
+.activeSession {
+  width: 100%;
+  max-width: 720px;
+  background: $white;
+  border: 1px solid $gray-300;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.sessionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0;
+    color: $textDark;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+}
+
+.sessionCode {
+  background: $dark-green;
+  color: $white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.timerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timerLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  span:first-child {
+    color: $textGray;
+    font-size: 0.9rem;
+  }
+}
+
+.timerValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.progressBar {
+  width: 100%;
+  height: 0.5rem;
+  background: $gray-200;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 1s linear, background-color 0.3s ease;
+}
+
+.refreshBtn {
+  align-self: flex-start;
+  border: 1px solid $dark-green;
+  background: transparent;
+  color: $dark-green;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $dark-green;
+    color: $white;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.input:disabled {
+  background: $gray-100;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.submitBtn:disabled {
+  background: $gray-300;
+  cursor: not-allowed;
+  transform: none;
+
+  &:hover {
+    background: $gray-300;
+    transform: none;
+  }
+}

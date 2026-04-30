@@ -237,3 +237,26 @@ void kirimKeSupabase(String jenis, int poin) {
   }
   http.end();
 }
+
+void refreshSessionExpiry() {
+  if (WiFi.status() != WL_CONNECTED) return;
+  HTTPClient http;
+  String url = String(supabase_url) + "/rest/v1/rpc/refresh_session_expiry";
+  http.begin(url);
+  http.addHeader("Content-Type", "application/json");
+  http.addHeader("apikey", supabase_key);
+  http.addHeader("Authorization", "Bearer " + String(supabase_key));
+  String payload = "{\"p_machine_id\":\"" + String(MACHINE_ID) + "\"}";
+  int code = http.POST(payload);
+  if (code == 200) {
+    Serial.println("✅ Session timer refreshed!");
+  } else {
+    Serial.printf("⚠️ Failed to refresh session: %d\n", code);
+  }
+  http.end();
+}
+Call it after successful transaction in kirimKeSupabase():
+if (postCode == 201) {
+  Serial.println("✅ Transaksi berhasil dikirim!");
+  refreshSessionExpiry();  // <-- ADD THIS LINE
+}
