@@ -15,10 +15,12 @@ import type {
 // ---------------------------------------------------------------------------
 
 function formatTime(isoString: string): string {
-  return new Date(isoString).toLocaleTimeString("id-ID", {
+  const utcDate = new Date(isoString.replace(" ", "T") + "Z");
+  return utcDate.toLocaleTimeString("id-ID", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "Asia/Jakarta",
   });
 }
 
@@ -26,10 +28,11 @@ function formatDateRange(dates: string[]): string {
   if (dates.length === 0) return "-";
   const sorted = [...dates].sort();
   const fmt = (d: string) =>
-    new Date(d).toLocaleDateString("id-ID", {
+    new Date(d.replace(" ", "T") + "Z").toLocaleDateString("id-ID", {
       day: "2-digit",
       month: "long",
       year: "numeric",
+      timeZone: "Asia/Jakarta",
     });
   const first = fmt(sorted[0]);
   const last = fmt(sorted[sorted.length - 1]);
@@ -46,21 +49,21 @@ function normalizeHeights(
   }));
 }
 
-function toLocalDateString(isoString: string): string {
-  // Konversi ke "YYYY-MM-DD" berdasarkan timezone lokal
-  const d = new Date(isoString);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
+function toLocalDateStringWIB(isoString: string): string {
+  const utcDate = new Date(isoString.replace(" ", "T") + "Z");
+  const wibTime = new Date(utcDate.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+  const yyyy = wibTime.getFullYear();
+  const mm = String(wibTime.getMonth() + 1).padStart(2, "0");
+  const dd = String(wibTime.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 }
 
 export function formatDisplayDate(dateStr: string): string {
-  // "2026-04-19" → "Min, 19 Apr"
-  return new Date(dateStr + "T00:00:00").toLocaleDateString("id-ID", {
+  return new Date(dateStr + "T00:00:00Z").toLocaleDateString("id-ID", {
     weekday: "short",
     day: "numeric",
     month: "short",
+    timeZone: "Asia/Jakarta",
   });
 }
 
@@ -151,7 +154,7 @@ async function fetchNearestMachine(
 function transactionsToChartData(transactions: RawTransaction[]): ChartDataPoint[] {
   const grouped = new Map<string, number>();
   for (const t of transactions) {
-    const date = toLocalDateString(t.created_at);
+    const date = toLocalDateStringWIB(t.created_at);
     grouped.set(date, (grouped.get(date) ?? 0) + (t.points_earned ?? 0));
   }
   const raw = Array.from(grouped.entries())
@@ -197,15 +200,15 @@ export async function getDashboardData(
       : 100;
 
   const chartData = transactionsToChartData(monthTransactions);
-  const todayStr = toLocalDateString(new Date().toISOString());
+  const todayStr = toLocalDateStringWIB(new Date().toISOString());
   const todayHistory = transactionsToHistoryEntries(
-    monthTransactions.filter((t) => toLocalDateString(t.created_at) === todayStr)
+    monthTransactions.filter((t) => toLocalDateStringWIB(t.created_at) === todayStr)
   );
 
   // allTransactionsByDate:
   const allTransactionsByDate = new Map<string, HistoryEntry[]>();
   for (const t of monthTransactions) {
-    const date = toLocalDateString(t.created_at);
+    const date = toLocalDateStringWIB(t.created_at);
     const entry = transactionsToHistoryEntries([t])[0];
     const existing = allTransactionsByDate.get(date) ?? [];
     allTransactionsByDate.set(date, [...existing, entry]);

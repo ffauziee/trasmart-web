@@ -56,23 +56,6 @@ export default function MasukkanKodeRoute() {
     return () => clearInterval(interval);
   }, [fetchSessionStatus]);
 
-  useEffect(() => {
-    if (pairedSession && pairedSession.time_remaining > 0) {
-      const timer = setInterval(() => {
-        setPairedSession((prev) => {
-          if (!prev || prev.time_remaining <= 1) {
-            clearInterval(timer);
-            return null;
-          }
-          return { ...prev, time_remaining: prev.time_remaining - 1 };
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    } else if (pairedSession && pairedSession.time_remaining <= 0) {
-      setPairedSession(null);
-    }
-  }, [pairedSession?.time_remaining, pairedSession !== null]);
-
   const handleRefreshTimer = async () => {
     setRefreshingTimer(true);
     try {

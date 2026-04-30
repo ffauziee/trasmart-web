@@ -14,11 +14,14 @@ export async function GET() {
     );
   }
 
+  const now = new Date().toISOString();
+
   const { data: session, error } = await supabase
     .from("machine_sessions")
     .select("session_code, status, expires_at, machine_id")
     .eq("user_id", user.id)
-    .in("status", ["paired"])
+    .eq("status", "paired")
+    .gt("expires_at", now)
     .single();
 
   if (error || !session) {
