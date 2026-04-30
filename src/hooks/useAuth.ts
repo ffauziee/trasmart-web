@@ -201,6 +201,66 @@ export function useAuth() {
     [user?.id, supabase],
   );
 
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string): Promise<void> => {
+      if (!user?.email) {
+        throw new Error("User not authenticated");
+      }
+
+      try {
+        setError(null);
+
+        // Re-autentikasi untuk verifikasi password lama
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: user.email,
+          password: currentPassword,
+        });
+
+        if (signInError) {
+          throw new Error("Password saat ini tidak valid");
+        }
+
+        // Update ke password baru
+        const { error: updateError } = await supabase.auth.updateUser({
+          password: newPassword,
+        });
+
+        if (updateError) {
+          throw new Error(updateError.message);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Change password error";
+        setError(errorMessage);
+        throw err;
+      }
+    },
+    [user?.email, supabase],
+  );
+
+  const sendPasswordReset = useCallback(
+    async (email: string): Promise<void> => {
+      try {
+        setError(null);
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+          email,
+          {
+            redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
+          },
+        );
+        if (resetError) {
+          throw new Error(resetError.message);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Reset password error";
+        setError(errorMessage);
+        throw err;
+      }
+    },
+    [supabase],
+  );
+
   return {
     user,
     userProfile,
@@ -208,5 +268,7 @@ export function useAuth() {
     error,
     signOut,
     updateProfile,
+    changePassword,
+    sendPasswordReset,
   };
 }

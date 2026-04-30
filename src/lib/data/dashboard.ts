@@ -101,7 +101,7 @@ async function fetchNextReward(
   return data;
 }
 
-// Fetch semua transaksi bulan ini sekaligus — digunakan untuk chart DAN history per hari
+// Fetch semua transaksi bulan 
 async function fetchMonthTransactions(
   supabase: SupabaseClient,
   userId: string

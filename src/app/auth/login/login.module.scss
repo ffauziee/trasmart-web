@@ -119,14 +119,16 @@
       font-size: 1rem;
       border-radius: 15px;
       margin-top: 15px;
-      transition: background-color 0.3s ease, transform 0.2s ease;
+      transition:
+        background-color 0.3s ease,
+        transform 0.2s ease;
 
       &:hover {
         background-color: color.adjust($dark-green, $lightness: -10%);
       }
-       &:active {
+      &:active {
         transform: scale(0.98);
-       }
+      }
     }
   }
 
@@ -196,6 +198,92 @@
   }
 }
 
+/* ── Forgot Password & Shared ───────────────────────────────────────────── */
+
+.forgotBtn {
+  background: none;
+  border: none;
+  color: $linkPrimary;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: text-decoration 0.2s;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.backBtn {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.6rem;
+  background: none;
+  border: 1px solid $borderSoft;
+  border-radius: 10px;
+  color: $textBody;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $bgPrimary;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.errorBox {
+  background: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border-left: 4px solid #c33;
+  text-align: left;
+}
+
+.successBox {
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $dark-green;
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: $textBody;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.successIcon {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+
 // Animation
 @keyframes fadeIn {
   from {
@@ -211,4 +299,3 @@
 .loginCard {
   animation: fadeIn 0.5s ease-out;
 }
-

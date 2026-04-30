@@ -153,9 +153,8 @@ export default async function DashboardRoute({
                 >
                   {/* Label tanggal */}
                   <div
-                    className={`${styles.bar} ${
-                      point.date === selectedDate ? styles.active : ""
-                    }`}
+                    className={`${styles.bar} ${point.date === selectedDate ? styles.active : ""
+                      }`}
                     style={{ height: `${point.heightPercent}%` }}
                   ></div>
                   <span
