@@ -48,7 +48,7 @@ export interface RawReward {
 // =============================================================================
 
 export type MachineStatus = "online" | "offline" | "maintenance";
-export type HistoryIconVariant = "recycle" | "coin";
+export type HistoryIconVariant = "plastic" | "metal" | "paper" | "other";
 
 export interface WalletInfo {
   totalPoints: number;

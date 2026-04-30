@@ -2,22 +2,52 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
-import { Leaf, MapPin, HandCoins } from "lucide-react";
+import {
+  Leaf,
+  MapPin,
+  HandCoins,
+  Recycle,
+  Target,
+  TrendingUp,
+  Zap,
+  ChevronRight,
+  BarChart3,
+  Activity,
+  PlusCircle,
+  Droplets,
+  Box,
+  FileText,
+} from "lucide-react";
 import styles from "./dashboard.module.scss";
-import PageTopbar from "@/components/layout/PageTopbar";
 
 import { getDashboardData, formatDisplayDate } from "@/lib/data/dashboard";
 import type { HistoryEntry, HistoryIconVariant } from "@/types/dashboard";
 import { createClient } from "@/lib/utils/supabase/server";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function getHistoryIconClass(variant: HistoryIconVariant): string {
-  return variant === "recycle"
-    ? styles.historyIconRecycle
-    : styles.historyIconCoin;
+  switch (variant) {
+    case "plastic":
+      return styles.historyIconPlastic;
+    case "metal":
+      return styles.historyIconMetal;
+    case "paper":
+      return styles.historyIconPaper;
+    default:
+      return styles.historyIconOther;
+  }
+}
+
+function getHistoryIcon(variant: HistoryIconVariant) {
+  switch (variant) {
+    case "plastic":
+      return <Droplets size={16} />;
+    case "metal":
+      return <Box size={16} />;
+    case "paper":
+      return <FileText size={16} />;
+    default:
+      return <Recycle size={16} />;
+  }
 }
 
 function getTodayString(): string {
@@ -30,10 +60,6 @@ function getTodayString(): string {
 }
 
 export const revalidate = 0;
-
-// ---------------------------------------------------------------------------
-// Page Component
-// ---------------------------------------------------------------------------
 
 export default async function DashboardRoute({
   searchParams,
@@ -81,186 +107,329 @@ export default async function DashboardRoute({
     allTransactionsByDate[selectedDate] ?? [];
 
   const historyLabel = isToday ? "Hari Ini" : formatDisplayDate(selectedDate);
+  const progressPercent = Math.min(
+    (wallet.totalPoints / Math.max(wallet.redemptionThreshold, 1)) * 100,
+    100
+  );
+
+  const chartDisplayData = chart.data.length > 0 ? chart.data : generateEmptyChart();
+
+  const totalPoints = chartDisplayData.reduce((sum, d) => sum + d.rawValue, 0);
+  const maxDay = chartDisplayData.reduce((max, d) => (d.rawValue > max.rawValue ? d : max), chartDisplayData[0]);
+  const avgDay = chartDisplayData.length > 0 ? Math.round(totalPoints / chartDisplayData.length) : 0;
 
   return (
     <div className={styles.mainContainer}>
-      <PageTopbar
-        title="Points Wallet"
-        description="Pantau poin dan riwayat setoran sampahmu di sini."
-        topbarClassName={styles.topbar}
-        topbarContentClassName={styles.topbarContent}
-        notificationBtnClassName={styles.notificationBtn}
-        notificationBadgeClassName={styles.notificationBadge}
-      />
-
-      <div className={styles.gridContainer}>
-        <div className={styles.leftColumn}>
-          {/* Banner + CTA */}
-          <div className={styles.bannerCard}>
-            <div className={styles.bannerGradient}></div>
-            <div className={styles.bannerContent}>
-              <p className={styles.bannerLabel}>Total Balance</p>
-              <div className={styles.balanceDisplay}>
-                <span className={styles.balanceAmount}>
-                  {wallet.totalPoints}
-                </span>
-                <span className={styles.balanceUnit}>Pts</span>
-              </div>
-              <p className={styles.balanceDescription}>
-                Bisa ditukar dengan {wallet.redemptionLabel} (min.{" "}
-                {wallet.redemptionThreshold} Pts)
-              </p>
-            </div>
-
-            <div className={styles.ctaCard}>
-              <div className={styles.ctaIcon}>
-                <Leaf size={128} />
-              </div>
-              <h3 className={styles.ctaTitle}>Tukarkan Poinmu!</h3>
-              <p className={styles.ctaDescription}>
-                Tinggal {pointsToGo} Poin lagi untuk mendapatkan{" "}
-                {cta.rewardLabel}.
-              </p>
-              <div className={styles.ctaProgressBar}>
-                <div
-                  className={styles.ctaProgressFill}
-                  style={{ width: `${cta.progressPercent}%` }}
-                ></div>
-              </div>
-              <Link href="/reward" className={styles.ctaButton}>
-                Lihat Katalog Hadiah
-              </Link>
-            </div>
+      {/* Header */}
+      <header className={styles.header}>
+        <div className={styles.headerLeft}>
+          <div className={styles.greeting}>
+            <span className={styles.greetingEmoji}>🌿</span>
+            <span>Selamat Datang</span>
           </div>
+          <h1 className={styles.headerTitle}>Dashboard</h1>
+          <p className={styles.headerDesc}>
+            Pantau poin dan riwayat setoran sampahmu di sini.
+          </p>
+        </div>
+      </header>
 
-          {/* ----------------------------------------------------------------
-              Chart
-          ---------------------------------------------------------------- */}
-          <div className={styles.chartCard}>
-            <div className={styles.chartHeader}>
-              <div className={styles.chartTitle}>
-                <h3>{chart.title}</h3>
-                <p className={styles.chartSubtitle}>{chart.dateRange}</p>
-              </div>
-            </div>
-            <div className={styles.chartBars}>
-              {chart.data.map((point) => (
-                <Link
-                  key={point.date}
-                  href={`/dashboard?date=${point.date}`}
-                  className={styles.barContainer}
-                  title={`${formatDisplayDate(point.date)}: ${point.rawValue} Pts`}
-                >
-                  {/* Label tanggal */}
-                  <div
-                    className={`${styles.bar} ${point.date === selectedDate ? styles.active : ""
-                      }`}
-                    style={{ height: `${point.heightPercent}%` }}
-                  ></div>
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      color:
-                        point.date === selectedDate ? "#166534" : "#9ca3af",
-                      fontWeight: point.date === selectedDate ? 700 : 400,
-                      marginTop: "4px",
-                      display: "block",
-                      textAlign: "center",
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {new Date(point.date + "T00:00:00Z").toLocaleDateString(
-                      "id-ID",
-                      {
-                        day: "numeric",
-                        month: "numeric",
-                        timeZone: "Asia/Jakarta",
-                      },
-                    )}
-                  </span>
-                </Link>
-              ))}
-            </div>
+      {/* Stat Cards */}
+      <div className={styles.statCards}>
+        <div className={styles.statCard}>
+          <div className={styles.statCardIcon}>
+            <Zap size={20} />
+          </div>
+          <div className={styles.statCardBody}>
+            <span className={styles.statCardLabel}>Total Poin</span>
+            <span className={styles.statCardValue}>{wallet.totalPoints.toLocaleString("id-ID")}</span>
           </div>
         </div>
 
-        <div className={styles.rightColumn}>
-          <div className={styles.statusCard}>
-            <div className={styles.statusCardBorder}></div>
-            <h3 className={styles.statusTitle}>
-              <MapPin size={16} className="text-[#166534]" /> Status Mesin
-              Terdekat
-            </h3>
-            {nearestMachine ? (
-              <div>
-                <div className={styles.statusMachine}>
-                  <div>
-                    <p className={styles.machineName}>{nearestMachine.name}</p>
-                    <p className={styles.capacityText}>
-                      {nearestMachine.locationLabel}
-                    </p>
-                  </div>
-                  {nearestMachine.status === "online" && (
-                    <span className={styles.onlineBadge}>
-                      <span className={styles.pulseIndicator}>
-                        <span className={styles.pulsePing}></span>
-                        <span className={styles.pulseDot}></span>
-                      </span>
-                      Online
-                    </span>
-                  )}
+        <div className={styles.statCard}>
+          <div className={styles.statCardIcon}>
+            <Target size={20} />
+          </div>
+          <div className={styles.statCardBody}>
+            <span className={styles.statCardLabel}>Target Berikutnya</span>
+            <span className={styles.statCardValue}>{wallet.redemptionLabel !== "-" ? wallet.redemptionLabel : "Belum ada"}</span>
+            <span className={styles.statCardSub}>
+              {wallet.redemptionThreshold > 0 ? `Min. ${wallet.redemptionThreshold.toLocaleString("id-ID")} Pts` : "Setor sampah untuk mulai"}
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statCardIcon}>
+            <TrendingUp size={20} />
+          </div>
+          <div className={styles.statCardBody}>
+            <span className={styles.statCardLabel}>Kurang</span>
+            <span className={styles.statCardValue}>{Math.max(0, pointsToGo).toLocaleString("id-ID")}</span>
+            <span className={styles.statCardSub}>poin lagi</span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statCardIcon}>
+            <Recycle size={20} />
+          </div>
+          <div className={styles.statCardBody}>
+            <span className={styles.statCardLabel}>Progress</span>
+            <span className={styles.statCardValue}>{Math.round(progressPercent)}%</span>
+            <div className={styles.statCardProgress}>
+              <div
+                className={styles.statCardProgressFill}
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Primary Action Bar */}
+      <Link href="/masukkan-kode" className={styles.primaryAction}>
+        <div className={styles.primaryActionIcon}>
+          <PlusCircle size={24} />
+        </div>
+        <div className={styles.primaryActionContent}>
+          <span className={styles.primaryActionLabel}>Mulai Setor Sampah</span>
+          <span className={styles.primaryActionDesc}>Masukkan kode untuk pair mesin IoT dan mulai mendaur ulang</span>
+        </div>
+        <ChevronRight size={20} className={styles.primaryActionArrow} />
+      </Link>
+
+      {/* Main Grid */}
+      <div className={styles.gridContainer}>
+        {/* Left Column */}
+        <div className={styles.leftColumn}>
+          {/* Chart Card — redesigned */}
+          <div className={styles.chartCard}>
+            <div className={styles.chartCardBg} />
+            <div className={styles.chartCardGrid} />
+
+            <div className={styles.chartCardHeader}>
+              <div className={styles.chartCardHeaderLeft}>
+                <div className={styles.chartCardIcon}>
+                  <BarChart3 size={20} />
                 </div>
-                <div className={styles.capacityBar}>
-                  <div
-                    className={styles.capacityFill}
-                    style={{ width: `${nearestMachine.capacityPercent}%` }}
-                  ></div>
+                <div>
+                  <h3 className={styles.chartCardTitle}>Aktivitas Poin</h3>
+                  <p className={styles.chartCardSubtitle}>
+                    {chart.dateRange !== "-" ? chart.dateRange : "Belum ada aktivitas bulan ini"}
+                  </p>
                 </div>
-                <p className={styles.capacityText}>
-                  Kapasitas: {nearestMachine.capacityPercent}%
-                </p>
               </div>
-            ) : (
-              <p className={styles.capacityText}>
-                Tidak ada mesin yang tersedia saat ini.
-              </p>
-            )}
+              <div className={styles.chartCardStats}>
+                <div className={styles.chartStat}>
+                  <Activity size={14} />
+                  <span>Total <strong>{totalPoints.toLocaleString("id-ID")}</strong></span>
+                </div>
+                <div className={styles.chartStat}>
+                  <TrendingUp size={14} />
+                  <span>Rata-rata <strong>{avgDay}</strong>/hari</span>
+                </div>
+                {maxDay && maxDay.rawValue > 0 && (
+                  <div className={styles.chartStat}>
+                    <Zap size={14} />
+                    <span>Tertinggi <strong>{maxDay.rawValue}</strong></span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.chartArea}>
+              {chartDisplayData.length > 0 ? (
+                <>
+                  {/* Grid lines */}
+                  <div className={styles.chartGridLines}>
+                    {[100, 75, 50, 25, 0].map((pct) => (
+                      <div key={pct} className={styles.chartGridLine} style={{ bottom: `${pct}%` }}>
+                        <span>{pct}%</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className={styles.chartBars}>
+                    {chartDisplayData.map((point) => {
+                      const isActive = point.date === selectedDate;
+                      const dayLabel = new Date(point.date + "T00:00:00Z").toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        timeZone: "Asia/Jakarta",
+                      });
+                      return (
+                        <Link
+                          key={point.date}
+                          href={`/dashboard?date=${point.date}`}
+                          className={`${styles.barItem} ${isActive ? styles.barItemActive : ""}`}
+                          title={`${formatDisplayDate(point.date)}: ${point.rawValue} Pts`}
+                        >
+                          <div className={styles.barWrapper}>
+                            <div
+                              className={`${styles.bar} ${isActive ? styles.barActive : ""}`}
+                              style={{
+                                height: `${Math.max(point.heightPercent, 3)}%`,
+                                animationDelay: `${chartDisplayData.indexOf(point) * 50}ms`,
+                              }}
+                            />
+                            {isActive && point.rawValue > 0 && (
+                              <div className={styles.barTooltip}>{point.rawValue} Pts</div>
+                            )}
+                          </div>
+                          <span className={`${styles.barLabel} ${isActive ? styles.barLabelActive : ""}`}>
+                            {dayLabel}
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className={styles.chartEmpty}>
+                  <Recycle size={48} strokeWidth={1.5} />
+                  <p>Belum ada aktivitas daur ulang</p>
+                  <span>Mulai setor sampah untuk melihat grafik di sini</span>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* ----------------------------------------------------------------
-              history
-          ---------------------------------------------------------------- */}
-          <div className={styles.historySection}>
-            <div className={styles.historyHeader}>
-              <h3 className={styles.historyTitle}>{historyLabel}</h3>
+          {/* History */}
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div className={styles.cardHeaderIcon}>
+                <HandCoins size={18} />
+              </div>
+              <div>
+                <h3 className={styles.cardTitle}>{historyLabel}</h3>
+                <p className={styles.cardSubtitle}>Riwayat setoran</p>
+              </div>
             </div>
-            <div className={styles.historyContainer}>
+            <div className={styles.historyList}>
               {visibleHistory.length === 0 ? (
-                <p className={styles.capacityText}>
+                <p className={styles.emptyText}>
                   Tidak ada setoran pada {formatDisplayDate(selectedDate)}.
                 </p>
               ) : (
                 visibleHistory.map((entry) => (
                   <div key={entry.id} className={styles.historyItem}>
                     <div className={getHistoryIconClass(entry.iconVariant)}>
-                      <HandCoins size={20} />
+                      {getHistoryIcon(entry.iconVariant)}
                     </div>
                     <div className={styles.historyInfo}>
-                      <p className={styles.historyTitle}>{entry.label}</p>
+                      <p className={styles.historyLabel}>{entry.label}</p>
                       <p className={styles.historyMeta}>
-                        <MapPin size={12} />
-                        {entry.machineName ?? "Mesin tidak diketahui"} •{" "}
-                        {entry.time}
+                        {entry.machineName ?? "Mesin tidak diketahui"} • {entry.time}
                       </p>
                     </div>
-                    <p className={styles.historyPoints}>+{entry.points} Pts</p>
+                    <span className={styles.historyPoints}>+{entry.points}</span>
                   </div>
                 ))
               )}
             </div>
           </div>
         </div>
+
+        {/* Right Column — Sidebar */}
+        <div className={styles.rightColumn}>
+          {/* CTA Card */}
+          <div className={styles.ctaCard}>
+            <div className={styles.ctaBg} />
+            <div className={styles.ctaBg2} />
+            <div className={styles.ctaContent}>
+              <div className={styles.ctaIconWrap}>
+                <Leaf size={28} />
+              </div>
+              <h3 className={styles.ctaTitle}>Tukarkan Poinmu!</h3>
+              <p className={styles.ctaDesc}>
+                Tinggal <strong>{Math.max(0, pointsToGo).toLocaleString("id-ID")}</strong> poin lagi untuk{" "}
+                {cta.rewardLabel !== "-" ? cta.rewardLabel : "reward pertama"}.
+              </p>
+              <div className={styles.ctaProgressWrap}>
+                <div className={styles.ctaProgressBar}>
+                  <div
+                    className={styles.ctaProgressFill}
+                    style={{ width: `${cta.progressPercent}%` }}
+                  />
+                </div>
+                <span className={styles.ctaProgressLabel}>{cta.progressPercent}%</span>
+              </div>
+              <Link href="/reward" className={styles.ctaButton}>
+                Lihat Katalog
+                <ChevronRight size={18} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Machine Status — moved to sidebar */}
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div className={styles.cardHeaderIcon}>
+                <MapPin size={18} />
+              </div>
+              <h3 className={styles.cardTitle}>Status Mesin</h3>
+            </div>
+            {nearestMachine ? (
+              <div className={styles.machineInfo}>
+                <div className={styles.machineHeader}>
+                  <div>
+                    <p className={styles.machineName}>{nearestMachine.name}</p>
+                    <p className={styles.machineLocation}>{nearestMachine.locationLabel}</p>
+                  </div>
+                  {nearestMachine.status === "online" && (
+                    <span className={styles.onlineBadge}>
+                      <span className={styles.pulseIndicator}>
+                        <span className={styles.pulsePing} />
+                        <span className={styles.pulseDot} />
+                      </span>
+                      Online
+                    </span>
+                  )}
+                </div>
+                <div className={styles.machineCapacity}>
+                  <div className={styles.capacityHeader}>
+                    <span>Kapasitas</span>
+                    <span>{nearestMachine.capacityPercent}%</span>
+                  </div>
+                  <div className={styles.capacityBar}>
+                    <div
+                      className={styles.capacityFill}
+                      style={{ width: `${nearestMachine.capacityPercent}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className={styles.emptyText}>Tidak ada mesin yang tersedia saat ini.</p>
+            )}
+          </div>
+
+          {/* Impact */}
+          <div className={styles.impactCard}>
+            <div className={styles.impactIcon}>
+              <Leaf size={20} />
+            </div>
+            <div className={styles.impactContent}>
+              <span className={styles.impactLabel}>Dampak Lingkungan</span>
+              <span className={styles.impactValue}>{wallet.totalPoints.toLocaleString("id-ID")} poin dikonversi</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
+}
+
+function generateEmptyChart() {
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    days.push({ date: `${yyyy}-${mm}-${dd}`, rawValue: 0, heightPercent: 3 });
+  }
+  return days;
 }

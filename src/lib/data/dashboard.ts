@@ -4,7 +4,6 @@ import type {
   RawTransaction,
   RawMachine,
   RawReward,
-  HistoryIconVariant,
   MachineStatus,
   HistoryEntry,
   ChartDataPoint,
@@ -163,6 +162,14 @@ function transactionsToChartData(transactions: RawTransaction[]): ChartDataPoint
   return normalizeHeights(raw);
 }
 
+function resolveIconVariant(categoryName: string | null): HistoryIconVariant {
+  if (!categoryName) return "other";
+  const name = categoryName.toLowerCase();
+  if (name.includes("kaleng") || name.includes("can") || name.includes("metal") || name.includes("aluminium")) return "metal";
+  if (name.includes("plastik") || name.includes("plastic") || name.includes("botol")) return "plastic";
+  return "other";
+}
+
 function transactionsToHistoryEntries(transactions: RawTransaction[]): HistoryEntry[] {
   return transactions.map((t) => ({
     id: t.id,
@@ -171,7 +178,7 @@ function transactionsToHistoryEntries(transactions: RawTransaction[]): HistoryEn
     machineLocation: t.machines?.location_label ?? null,
     time: formatTime(t.created_at),
     points: t.points_earned,
-    iconVariant: (t.trash_categories?.icon_variant ?? "recycle") as HistoryIconVariant,
+    iconVariant: resolveIconVariant(t.trash_categories?.name ?? null),
   }));
 }
 
