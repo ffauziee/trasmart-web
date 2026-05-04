@@ -133,10 +133,12 @@ export default function NotificationBell({
     init();
   }, [supabase]);
 
-  const loadNotifications = useCallback(async () => {
+  const loadNotifications = useCallback(async (silent = false) => {
     if (!userId) return;
 
-    setLoading(true);
+    if (!silent) {
+      setLoading(true);
+    }
     setError(null);
 
     try {
@@ -199,18 +201,22 @@ export default function NotificationBell({
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gagal memuat notifikasi");
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, [supabase, userId]);
 
   useEffect(() => {
     if (!userId) return;
 
-    void loadNotifications();
+    void loadNotifications(true);
 
     const intervalId = window.setInterval(() => {
-      void loadNotifications();
-    }, 10000);
+      if (!document.hidden) {
+        void loadNotifications(true);
+      }
+    }, 30000);
 
     const handleActivityChange = (event: Event) => {
       const customEvent = event as CustomEvent<ActivityChangedDetail>;
@@ -237,15 +243,22 @@ export default function NotificationBell({
         });
       }
 
-      void loadNotifications();
+      void loadNotifications(true);
     };
 
     const handleFocus = () => {
-      void loadNotifications();
+      void loadNotifications(true);
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        void loadNotifications(true);
+      }
     };
 
     window.addEventListener("trasmart:activity-changed", handleActivityChange);
     window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       window.clearInterval(intervalId);
@@ -254,6 +267,7 @@ export default function NotificationBell({
         handleActivityChange,
       );
       window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [userId, loadNotifications, pendingKey]);
 
@@ -272,6 +286,7 @@ export default function NotificationBell({
     setIsOpen((prev) => {
       const next = !prev;
       if (next) {
+        void loadNotifications();
         markAsRead();
       }
       return next;

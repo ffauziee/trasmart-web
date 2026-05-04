@@ -3,20 +3,20 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useAuth, UserProfile } from "@/hooks/useAuth";
 
-//Update interface
 interface UserContextType {
   user: UserProfile | null;
   loading: boolean;
   error: string | null;
   updateUser: (updatedUser: Partial<UserProfile>) => Promise<void>;
   signOut: () => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  //Gunakan useAuth hook untuk dapat data real dari Supabase
-  const { userProfile, loading, error, updateProfile, signOut } = useAuth();
+  const { userProfile, loading, error, updateProfile, signOut, changePassword, sendPasswordReset } = useAuth();
 
   return (
     <UserContext.Provider
@@ -24,8 +24,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
         user: userProfile,
         loading,
         error,
-        updateUser: updateProfile, //
+        updateUser: updateProfile,
         signOut,
+        changePassword,
+        sendPasswordReset,
       }}
     >
       {children}

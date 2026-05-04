@@ -1,22 +1,20 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
-import { Providers } from "./providers";
+import { Outfit, DM_Sans } from "next/font/google";
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-outfit",
 });
 
-const poppins = Poppins({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-poppins",
+  variable: "--font-dm-sans",
 });
 
 export const metadata: Metadata = {
-  title: "TrasMart",
-  description: "Convert your waste into points",
+  title: "TrasMart - Ubah Sampah Jadi Poin",
+  description: "Tukar botol plastik dan kaleng dengan poin untuk voucher kantin Polinema",
 };
 
 export default function RootLayout({
@@ -25,9 +23,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${poppins.variable}`}>
-        <Providers>{children}</Providers>
+    <html lang="id">
+      <body className={`${outfit.variable} ${dmSans.variable}`}>
+        {children}
       </body>
     </html>
   );

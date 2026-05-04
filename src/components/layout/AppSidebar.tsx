@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   LayoutDashboard,
   User,
@@ -10,7 +11,7 @@ import {
   ScanLine,
 } from "lucide-react";
 import styles from "./AppSidebar.module.scss";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useUser } from "@/contexts/UserContext";
 
@@ -40,7 +41,6 @@ const AppSidebar: React.FC = () => {
     setIsHovered,
   } = useSidebar();
   const pathname = usePathname();
-  const router = useRouter();
   const { user: userProfile, signOut } = useUser();
 
   const isOpen = isExpanded || isHovered || isMobileOpen;
@@ -51,20 +51,18 @@ const AppSidebar: React.FC = () => {
         const active = pathname === nav.path;
         return (
           <li key={nav.name} className={styles.menuItemWrapper}>
-            <a
-              href="#"
+            <Link
+              href={nav.path}
               className={`${styles.menuItem} ${
                 active ? styles.menuItemActive : ""
               }`}
-              onClick={(e) => {
-                e.preventDefault();
-                router.push(nav.path);
+              onClick={() => {
                 if (isMobileOpen) toggleMobileSidebar();
               }}
             >
               <span className={styles.menuIcon}>{nav.icon}</span>
               {isOpen && <span className={styles.menuText}>{nav.name}</span>}
-            </a>
+            </Link>
             {!isOpen && <span className={styles.tooltip}>{nav.name}</span>}
           </li>
         );
