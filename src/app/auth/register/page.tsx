@@ -101,24 +101,6 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleSignUp = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`,
-        },
-      });
-      if (error) setError(error.message);
-    } catch {
-      setError("Failed to sign up with Google");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Google OAuth signup
   const handleGoogleSignUp = async () => {
     setLoading(true);

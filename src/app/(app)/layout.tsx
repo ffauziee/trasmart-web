@@ -1,9 +1,10 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { SidebarProvider } from "@/contexts/SidebarContext";
-import { UserProvider } from "@/contexts/UserContext";
+import { UserProvider, useUser } from "@/contexts/UserContext";
 import styles from "./pages.module.scss";
 
 const AppSidebar = dynamic(() => import("@/components/layout/AppSidebar"), {
@@ -11,21 +12,52 @@ const AppSidebar = dynamic(() => import("@/components/layout/AppSidebar"), {
   loading: () => <div className={styles.sidebarLoading} />,
 });
 
-interface PagesLayoutProps {
-  children: React.ReactNode;
+function AuthGuard({ children }: { children: React.ReactNode }) {
+  const { user, loading, error } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && (!user || error)) {
+      router.replace("/auth/login");
+    }
+  }, [user, loading, error, router]);
+
+  if (loading) {
+    return (
+      <div className={styles.pagesLayout}>
+        <div className={styles.loadingPage}>
+          <p>Memuat...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || error) {
+    return (
+      <div className={styles.pagesLayout}>
+        <div className={styles.loadingPage}>
+          <p>Mengalihkan ke halaman login...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <SidebarProvider>
+      <div className={styles.pagesLayout}>
+        <Suspense fallback={<div className={styles.sidebarLoading} />}>
+          <AppSidebar />
+        </Suspense>
+        <main className={styles.pagesContent}>{children}</main>
+      </div>
+    </SidebarProvider>
+  );
 }
 
-export default function PagesLayout({ children }: PagesLayoutProps) {
+export default function PagesLayout({ children }: { children: React.ReactNode }) {
   return (
     <UserProvider>
-      <SidebarProvider>
-        <div className={styles.pagesLayout}>
-          <Suspense fallback={<div className={styles.sidebarLoading} />}>
-            <AppSidebar />
-          </Suspense>
-          <main className={styles.pagesContent}>{children}</main>
-        </div>
-      </SidebarProvider>
+      <AuthGuard>{children}</AuthGuard>
     </UserProvider>
   );
 }

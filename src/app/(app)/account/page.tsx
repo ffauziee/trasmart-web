@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   User,
   Mail,
@@ -17,7 +17,7 @@ import {
 import styles from "./account.module.scss";
 import { useUser } from "@/contexts/UserContext";
 import type { UserProfile } from "@/hooks/useAuth";
-import { getUserPointSummary } from "@/lib/data/points";
+import { createClient } from "@/lib/utils/supabase/client";
 import PageTopbar from "@/components/layout/PageTopbar";
 
 export default function AccountRoute() {
@@ -28,6 +28,8 @@ export default function AccountRoute() {
   const [pointError, setPointError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
   const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const userIdRef = useRef<string | null>(null);
+  userIdRef.current = user?.id ?? null;
 
   // State modal Change Password
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -58,15 +60,22 @@ export default function AccountRoute() {
   }, [user]);
 
   const loadPoints = useCallback(async () => {
-    if (!user?.id) return;
+    const uid = userIdRef.current;
+    if (!uid) return;
     try {
       setPointError(null);
-      const summary = await getUserPointSummary(user.id);
-      setPointBalance(summary.netPoints);
+      const supabase = createClient();
+      const { data, error: fetchErr } = await supabase
+        .from("profiles")
+        .select("points")
+        .eq("id", uid)
+        .maybeSingle();
+      if (fetchErr) throw new Error(fetchErr.message);
+      setPointBalance(data?.points ?? 0);
     } catch (err) {
       setPointError(err instanceof Error ? err.message : "Gagal memuat poin");
     }
-  }, [user?.id]);
+  }, []);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -107,6 +116,7 @@ export default function AccountRoute() {
       setIsEditing(false);
       setToast({ type: "success", message: "Profile updated successfully!" });
       setTimeout(() => setToast(null), 4000);
+      window.dispatchEvent(new Event("trasmart:activity-changed"));
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Failed to update profile";
       setToast({ type: "error", message: `Error: ${errorMsg}` });

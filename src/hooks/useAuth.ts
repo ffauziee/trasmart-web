@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/utils/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 
 export interface UserProfile {
   id: string;
@@ -28,35 +28,55 @@ export function useAuth() {
 
   const supabase = useMemo(() => createClient(), []);
 
+  const userRef = useRef<User | null>(null);
+  const userProfileRef = useRef<UserProfile | null>(null);
+  userRef.current = user;
+  userProfileRef.current = userProfile;
+
+  const fetchProfile = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+    return data;
+  }, [supabase]);
+
   useEffect(() => {
     let isMounted = true;
 
     const initAuth = async () => {
       try {
-        //Get current user
         const {
-          data: { user },
+          data: { user: authUser },
           error: err,
         } = await supabase.auth.getUser();
         if (err) throw err;
 
         if (isMounted) {
-          setUser(user ?? null);
+          setUser(authUser ?? null);
 
-          if (user?.id) {
-            const { data, error: profileError } = await supabase
-              .from("profiles")
-              .select("*")
-              .eq("id", user.id)
-              .single();
+          if (authUser?.id) {
+            const profileData = await fetchProfile(authUser.id);
 
-            if (profileError) {
-              console.warn("Profile not found:", profileError);
-              // Create default
+            if (profileData) {
               setUserProfile({
-                id: user.id,
+                id: authUser.id,
+                username: profileData.username || "",
+                email: authUser.email || "",
+                points: profileData.points ?? 0,
+                fullName: profileData.full_name || "",
+                phone: profileData.phone || "",
+                address: profileData.address || "",
+                avatar: profileData.avatar_url || "",
+                city: profileData.city || "",
+                postal_code: profileData.postal_code || "",
+              });
+            } else {
+              setUserProfile({
+                id: authUser.id,
                 username: "",
-                email: user.email || "",
+                email: authUser.email || "",
                 points: 0,
                 fullName: "",
                 phone: "",
@@ -64,19 +84,6 @@ export function useAuth() {
                 avatar: "",
                 city: "",
                 postal_code: "",
-              });
-            } else {
-              setUserProfile({
-                id: user.id,
-                username: data?.username || "",
-                email: user.email || "",
-                points: data?.points ?? 0,
-                fullName: data?.full_name || "",
-                phone: data?.phone || "",
-                address: data?.address || "",
-                avatar: data?.avatar_url || "",
-                city: data?.city || "",
-                postal_code: data?.postal_code || "",
               });
             }
           }
@@ -98,36 +105,34 @@ export function useAuth() {
 
     initAuth();
 
-    //setup AuthListener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (isMounted) {
-        setUser(session?.user ?? null);
-        // Fetch profile on session changes
-        if (session?.user?.id) {
-          const { data } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", session.user.id)
-            .single();
+    } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
+      if (!isMounted) return;
 
-          if (data) {
-            setUserProfile({
-              id: session.user.id,
-              email: session.user.email || "",
-              username: data.username || "",
-              points: data.points ?? 0,
-              fullName: data.full_name || "",
-              phone: data.phone || "",
-              address: data.address || "",
-              avatar: data.avatar_url || "",
-              city: data.city || "",
-              postal_code: data.postal_code || "",
-            });
-          }
-        } else {
-          setUserProfile(null);
+      const sessionUser = session?.user ?? null;
+      setUser(sessionUser);
+
+      if (event === "SIGNED_OUT") {
+        setUserProfile(null);
+        return;
+      }
+
+      if (sessionUser?.id) {
+        const profileData = await fetchProfile(sessionUser.id);
+        if (profileData && isMounted) {
+          setUserProfile({
+            id: sessionUser.id,
+            email: sessionUser.email || "",
+            username: profileData.username || "",
+            points: profileData.points ?? 0,
+            fullName: profileData.full_name || "",
+            phone: profileData.phone || "",
+            address: profileData.address || "",
+            avatar: profileData.avatar_url || "",
+            city: profileData.city || "",
+            postal_code: profileData.postal_code || "",
+          });
         }
       }
     });
@@ -136,7 +141,7 @@ export function useAuth() {
       isMounted = false;
       subscription?.unsubscribe();
     };
-  }, [supabase]);
+  }, [supabase, fetchProfile]);
 
   const signOut = useCallback(async () => {
     try {
@@ -152,14 +157,14 @@ export function useAuth() {
 
   const updateProfile = useCallback(
     async (updates: Partial<UserProfile>): Promise<void> => {
-      if (!user?.id) {
+      const currentUser = userRef.current;
+      if (!currentUser?.id) {
         throw new Error("User not authenticated");
       }
 
       try {
         setError(null);
 
-        //update data
         const updateData: any = {};
         if (updates.username !== undefined)
           updateData.username = updates.username;
@@ -173,46 +178,42 @@ export function useAuth() {
         if (updates.postal_code !== undefined)
           updateData.postal_code = updates.postal_code;
 
-        console.log("Updating profile with data:", updateData);
-
-        const { data, error: err } = await supabase
+        const { error: err } = await supabase
           .from("profiles")
           .update(updateData)
-          .eq("id", user.id)
+          .eq("id", currentUser.id)
           .select();
 
         if (err) {
-          console.error("Update error:", err);
           throw new Error(err.message || "Failed to update profile");
         }
 
-        console.log("Update response:", data);
-
-        //Update local state
-        setUserProfile((prev) => (prev ? { ...prev, ...updates } : null));
+        const currentProfile = userProfileRef.current;
+        if (currentProfile) {
+          setUserProfile({ ...currentProfile, ...updates });
+        }
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Update profile error";
-        console.error("updateProfile error:", errorMessage);
         setError(errorMessage);
         throw err;
       }
     },
-    [user?.id, supabase],
+    [supabase],
   );
 
   const changePassword = useCallback(
     async (currentPassword: string, newPassword: string): Promise<void> => {
-      if (!user?.email) {
+      const currentUser = userRef.current;
+      if (!currentUser?.email) {
         throw new Error("User not authenticated");
       }
 
       try {
         setError(null);
 
-        // Re-autentikasi untuk verifikasi password lama
         const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: user.email,
+          email: currentUser.email,
           password: currentPassword,
         });
 
@@ -220,7 +221,6 @@ export function useAuth() {
           throw new Error("Password saat ini tidak valid");
         }
 
-        // Update ke password baru
         const { error: updateError } = await supabase.auth.updateUser({
           password: newPassword,
         });
@@ -235,7 +235,7 @@ export function useAuth() {
         throw err;
       }
     },
-    [user?.email, supabase],
+    [supabase],
   );
 
   const sendPasswordReset = useCallback(
