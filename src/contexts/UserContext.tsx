@@ -5,6 +5,7 @@ import { useAuth, UserProfile } from "@/hooks/useAuth";
 
 interface UserContextType {
   user: UserProfile | null;
+  isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
   updateUser: (updatedUser: Partial<UserProfile>) => Promise<void>;
@@ -16,12 +17,13 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const { userProfile, loading, error, updateProfile, signOut, changePassword, sendPasswordReset } = useAuth();
+  const { user, userProfile, loading, error, updateProfile, signOut, changePassword, sendPasswordReset } = useAuth();
 
   return (
     <UserContext.Provider
       value={{
         user: userProfile,
+        isAuthenticated: !!user,
         loading,
         error,
         updateUser: updateProfile,

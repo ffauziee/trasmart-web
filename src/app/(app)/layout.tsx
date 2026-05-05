@@ -13,14 +13,14 @@ const AppSidebar = dynamic(() => import("@/components/layout/AppSidebar"), {
 });
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, loading, error } = useUser();
+  const { isAuthenticated, loading, error } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && (!user || error)) {
+    if (!loading && (!isAuthenticated || error)) {
       router.replace("/auth/login");
     }
-  }, [user, loading, error, router]);
+  }, [isAuthenticated, loading, error, router]);
 
   if (loading) {
     return (
@@ -32,7 +32,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user || error) {
+  if (!isAuthenticated || error) {
     return (
       <div className={styles.pagesLayout}>
         <div className={styles.loadingPage}>
