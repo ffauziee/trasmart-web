@@ -1,4 +1,4 @@
-﻿@use "@/components/theme/tokens" as *;
+@use "@/components/theme/tokens" as *;
 
 // ===== PAGE =====
 .page {
@@ -1215,7 +1215,7 @@
 }
 
 // ===== MOBILE =====
-@media (max-width: $tablet - 1px) {
+@media (max-width: 768px) {
   .navbar {
     .navLinks,
     .navActions {
