@@ -5,17 +5,6 @@
 #include <LiquidCrystal_I2C.h>
 #include "secrets.h"
 
-#ifndef SECRETS_H
-#define SECRETS_H
-const char* ssid             = "WIFI_NAME";
-const char* password         = "WIFI_PASSWORD";
-const char* supabase_url     = "https://YOUR_PROJECT.supabase.co";
-const char* supabase_key     = "YOUR_PUBLISHABLE_KEY";
-const char* MACHINE_ID       = "YOUR_MACHINE_UUID";
-const char* CATEGORY_LOGAM   = "YOUR_UUID_LOGAM";
-const char* CATEGORY_PLASTIK = "YOUR_UUID_PLASTIK";
-#endif
-
 // MQTT Broker (bukan secret)
 const char* mqtt_server = "broker.hivemq.com";
 
@@ -36,6 +25,8 @@ long duration;
 int distance;
 
 // Fungsi Kirim ke Supabase (Sekarang menerima 2 parameter: Jenis dan Poin)
+void kirimKeSupabase(String jenis, int poin);
+void refreshSessionExpiry();
 
 void setup_wifi() {
   delay(10);
@@ -231,6 +222,7 @@ void kirimKeSupabase(String jenis, int poin) {
 
   if (postCode == 201) {
     Serial.println("✅ Transaksi berhasil dikirim!");
+    refreshSessionExpiry();
   } else {
     Serial.printf("❌ POST Error: %d\n", postCode);
     Serial.println(http.getString());
@@ -254,9 +246,4 @@ void refreshSessionExpiry() {
     Serial.printf("⚠️ Failed to refresh session: %d\n", code);
   }
   http.end();
-}
-Call it after successful transaction in kirimKeSupabase():
-if (postCode == 201) {
-  Serial.println("✅ Transaksi berhasil dikirim!");
-  refreshSessionExpiry();  // <-- ADD THIS LINE
 }
