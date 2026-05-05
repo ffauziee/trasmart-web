@@ -6,6 +6,7 @@ import type {
   RawReward,
   MachineStatus,
   HistoryEntry,
+  HistoryIconVariant,
   ChartDataPoint,
 } from "@/types/dashboard";
 
