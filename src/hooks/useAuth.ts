@@ -45,66 +45,6 @@ export function useAuth() {
   useEffect(() => {
     let isMounted = true;
 
-    const initAuth = async () => {
-      try {
-        const {
-          data: { user: authUser },
-          error: err,
-        } = await supabase.auth.getUser();
-        if (err) throw err;
-
-        if (isMounted) {
-          setUser(authUser ?? null);
-
-          if (authUser?.id) {
-            const profileData = await fetchProfile(authUser.id);
-
-            if (profileData) {
-              setUserProfile({
-                id: authUser.id,
-                username: profileData.username || "",
-                email: authUser.email || "",
-                points: profileData.points ?? 0,
-                fullName: profileData.full_name || "",
-                phone: profileData.phone || "",
-                address: profileData.address || "",
-                avatar: profileData.avatar_url || "",
-                city: profileData.city || "",
-                postal_code: profileData.postal_code || "",
-              });
-            } else {
-              setUserProfile({
-                id: authUser.id,
-                username: "",
-                email: authUser.email || "",
-                points: 0,
-                fullName: "",
-                phone: "",
-                address: "",
-                avatar: "",
-                city: "",
-                postal_code: "",
-              });
-            }
-          }
-
-          setError(null);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : "Auth error");
-          setUser(null);
-          setUserProfile(null);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    initAuth();
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
@@ -113,27 +53,54 @@ export function useAuth() {
       const sessionUser = session?.user ?? null;
       setUser(sessionUser);
 
-      if (event === "SIGNED_OUT") {
+      if (event === "SIGNED_OUT" || !sessionUser) {
         setUserProfile(null);
+        setLoading(false);
         return;
       }
 
       if (sessionUser?.id) {
-        const profileData = await fetchProfile(sessionUser.id);
-        if (profileData && isMounted) {
-          setUserProfile({
-            id: sessionUser.id,
-            email: sessionUser.email || "",
-            username: profileData.username || "",
-            points: profileData.points ?? 0,
-            fullName: profileData.full_name || "",
-            phone: profileData.phone || "",
-            address: profileData.address || "",
-            avatar: profileData.avatar_url || "",
-            city: profileData.city || "",
-            postal_code: profileData.postal_code || "",
-          });
+        try {
+          const profileData = await fetchProfile(sessionUser.id);
+          if (!isMounted) return;
+
+          if (profileData) {
+            setUserProfile({
+              id: sessionUser.id,
+              username: profileData.username || "",
+              email: sessionUser.email || "",
+              points: profileData.points ?? 0,
+              fullName: profileData.full_name || "",
+              phone: profileData.phone || "",
+              address: profileData.address || "",
+              avatar: profileData.avatar_url || "",
+              city: profileData.city || "",
+              postal_code: profileData.postal_code || "",
+            });
+          } else {
+            setUserProfile({
+              id: sessionUser.id,
+              username: "",
+              email: sessionUser.email || "",
+              points: 0,
+              fullName: "",
+              phone: "",
+              address: "",
+              avatar: "",
+              city: "",
+              postal_code: "",
+            });
+          }
+        } catch (err) {
+          if (isMounted) {
+            setError(err instanceof Error ? err.message : "Auth error");
+          }
         }
+      }
+
+      if (isMounted) {
+        setError(null);
+        setLoading(false);
       }
     });
 
