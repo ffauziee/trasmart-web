@@ -27,6 +27,7 @@ export default function AccountRoute() {
   const [pointBalance, setPointBalance] = useState(0);
   const [pointError, setPointError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
+  const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   // State modal Change Password
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -104,10 +105,12 @@ export default function AccountRoute() {
     try {
       await updateUser(formData);
       setIsEditing(false);
-      alert("Profile updated successfully!");
+      setToast({ type: "success", message: "Profile updated successfully!" });
+      setTimeout(() => setToast(null), 4000);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Failed to update profile";
-      alert(`❌ Error: ${errorMsg}`);
+      setToast({ type: "error", message: `Error: ${errorMsg}` });
+      setTimeout(() => setToast(null), 5000);
     } finally {
       setIsSaving(false);
     }
@@ -181,7 +184,7 @@ export default function AccountRoute() {
   if (loading) {
     return (
       <div className={styles.mainContainer}>
-        <div style={{ padding: "40px", textAlign: "center" }}>
+        <div className={styles.loadingState}>
           <p>Loading profile...</p>
         </div>
       </div>
@@ -191,7 +194,7 @@ export default function AccountRoute() {
   if (error) {
     return (
       <div className={styles.mainContainer}>
-        <div style={{ padding: "40px", textAlign: "center", color: "#c33", background: "#fee", borderRadius: "8px" }}>
+        <div className={styles.errorState}>
           <p>Error loading profile: {error}</p>
         </div>
       </div>
@@ -200,6 +203,26 @@ export default function AccountRoute() {
 
   return (
     <div className={styles.mainContainer}>
+      {toast && (
+        <div
+          className={`${styles.toast} ${
+            toast.type === "success" ? styles.toastSuccess : styles.toastError
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          <span className={styles.toastMessage}>{toast.message}</span>
+          <button
+            type="button"
+            className={styles.toastClose}
+            onClick={() => setToast(null)}
+            aria-label="Tutup notifikasi"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <PageTopbar
         title="My Account"
         description="Kelola informasi profil akun kamu"
@@ -213,9 +236,11 @@ export default function AccountRoute() {
         <div className={styles.profileCard}>
           <div className={styles.profileHeader}>
             <div className={styles.avatarContainer}>
-              <div className={styles.avatarLarge}>{user?.avatar || "👤"}</div>
+              <div className={styles.avatarLarge}>
+                <User size={48} strokeWidth={1.5} />
+              </div>
               {isEditing && (
-                <button className={styles.avatarEditBtn}>
+                <button className={styles.avatarEditBtn} type="button" aria-label="Change avatar">
                   <Camera size={16} />
                 </button>
               )}

@@ -59,9 +59,16 @@
       font-size: 0.95rem;
       font-weight: 500;
       transition: color 0.2s;
+      padding: 4px;
+      border-radius: 4px;
 
       &:hover {
         color: var(--color-primary);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
       }
     }
   }
@@ -82,6 +89,11 @@
 
       &:hover {
         color: var(--color-primary);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
       }
     }
 
@@ -109,6 +121,19 @@
     color: var(--color-text);
     cursor: pointer;
     padding: 0.5rem;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--color-bg);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
   }
 }
 
@@ -137,6 +162,16 @@
     font-weight: 500;
     font-size: 1.05rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+
+    &:hover {
+      color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
   }
 
   .mobileMenuActions {
@@ -279,6 +314,7 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.875rem 1.75rem;
+      min-height: 48px;
       background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
       color: white;
       font-weight: 700;
@@ -291,6 +327,11 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(22, 101, 52, 0.35);
       }
+
+      &:focus-visible {
+        outline: 3px solid var(--color-primary-glow);
+        outline-offset: 2px;
+      }
     }
 
     .btnSecondary {
@@ -298,6 +339,7 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.875rem 1.75rem;
+      min-height: 48px;
       background: var(--color-surface);
       color: var(--color-text);
       font-weight: 600;
@@ -311,6 +353,11 @@
         border-color: var(--color-primary);
         color: var(--color-primary);
         transform: translateY(-1px);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
       }
     }
   }
@@ -1011,6 +1058,18 @@
   cursor: pointer;
   text-align: left;
   gap: 1rem;
+  min-height: 48px;
+  border-radius: var(--radius-lg);
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-bg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
 
   svg {
     flex-shrink: 0;
@@ -1223,24 +1282,358 @@
     }
 
     .mobileMenuBtn {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
   .mobileMenu {
     display: block;
+    animation: slideDown 0.3s ease-out;
   }
 
   .hero {
     padding-top: 6rem;
+    padding-bottom: 3rem;
     min-height: auto;
 
     .heroScroll {
       display: none;
     }
+
+    .heroInner {
+      gap: 2rem;
+    }
+
+    .heroVisualContainer {
+      max-width: 320px;
+    }
+
+    .heroMachineBody {
+      width: 160px;
+      height: 220px;
+    }
+
+    .heroMachineScreen {
+      top: 15px;
+      left: 12px;
+      right: 12px;
+      height: 100px;
+    }
+
+    .heroMachineSlot {
+      bottom: 50px;
+      width: 80px;
+      height: 6px;
+    }
+
+    .heroMachineBase {
+      bottom: 15px;
+      width: 65px;
+      height: 16px;
+    }
+
+    .heroFloatingCard {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+
+      &1 {
+        top: 10%;
+        right: -2%;
+      }
+
+      &2 {
+        bottom: 20%;
+        left: -5%;
+      }
+
+      &3 {
+        bottom: 5%;
+        right: -2%;
+      }
+    }
+
+    .heroContent {
+      h1 {
+        font-size: clamp(1.75rem, 7vw, 2.5rem);
+        margin: 1rem 0;
+      }
+
+      p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    .heroBadge {
+      font-size: 0.8rem;
+    }
+
+    .heroProof {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+
+  .stats {
+    padding: 2rem 1rem;
+
+    .statsInner {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .statCard {
+      padding: 1.25rem 0.75rem;
+    }
+
+    .statValue {
+      font-size: 1.5rem;
+    }
+
+    .statLabel {
+      font-size: 0.8rem;
+    }
+  }
+
+  .howItWorks {
+    padding: 4rem 1rem;
+
+    .sectionHeader {
+      margin-bottom: 2.5rem;
+    }
+  }
+
+  .stepsGrid {
+    gap: 1.5rem;
+  }
+
+  .stepCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .stepNumber {
+    font-size: 2.5rem;
+  }
+
+  .stepIcon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .features {
+    padding: 4rem 1rem;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .featureCard {
+    padding: 1.5rem;
+  }
+
+  .impact {
+    padding: 4rem 1rem;
+
+    .impactInner {
+      gap: 2rem;
+    }
+
+    .impactVisual {
+      max-width: 280px;
+    }
+
+    .impactCircle {
+      width: 60px;
+      height: 60px;
+    }
+
+    .impactCenter {
+      width: 90px;
+      height: 90px;
+    }
+  }
+
+  .testimonials {
+    padding: 4rem 1rem;
+  }
+
+  .testimonialsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .testimonialCard {
+    padding: 1.5rem;
+  }
+
+  .faq {
+    padding: 4rem 1rem;
+  }
+
+  .faqList {
+    gap: 0.5rem;
+  }
+
+  .faqQuestion {
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .faqAnswer {
+    p {
+      padding: 0 1.25rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  .finalCta {
+    padding: 4rem 1rem;
+  }
+
+  .footer {
+    padding: 3rem 1rem 1.5rem;
+
+    .footerLinks {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
   }
 
   .stepConnector {
     display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    .heroVisualContainer {
+      max-width: 260px;
+    }
+
+    .heroMachineBody {
+      width: 130px;
+      height: 180px;
+    }
+
+    .heroMachineScreen {
+      top: 12px;
+      left: 10px;
+      right: 10px;
+      height: 80px;
+    }
+
+    .heroMachineScreenContent {
+      .heroMachineIcon {
+        width: 32px;
+        height: 32px;
+      }
+
+      span {
+        font-size: 0.9rem;
+      }
+    }
+
+    .heroMachinePoints {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .heroMachineSlot {
+      bottom: 40px;
+      width: 65px;
+      height: 5px;
+    }
+
+    .heroMachineBase {
+      bottom: 12px;
+      width: 55px;
+      height: 14px;
+    }
+
+    .heroFloatingCard {
+      display: none;
+    }
+  }
+
+  .stats {
+    .statsInner {
+      grid-template-columns: 1fr;
+    }
+
+    .statCard {
+      padding: 1rem;
+    }
+  }
+
+  .footerLinks {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+// ===== DARK MODE ADJUSTMENTS =====
+:root[data-theme="dark"] {
+  .heroBlob {
+    opacity: 0.2;
+
+    &3 {
+      opacity: 0.15;
+    }
+  }
+
+  .heroMachineBody {
+    background: linear-gradient(180deg, #334155, #1e293b);
+    box-shadow: var(--shadow-xl), inset 0 2px 4px rgba(255, 255, 255, 0.05);
+  }
+
+  .heroMachineSlot {
+    background: #475569;
+  }
+
+  .heroMachineBase {
+    background: linear-gradient(180deg, #475569, #334155);
+  }
+
+  .heroFloatingCard {
+    background: var(--color-surface);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .heroProofAvatar {
+    border-color: var(--color-surface);
+  }
+
+  .stepNumber {
+    background: linear-gradient(135deg, var(--color-primary-soft), var(--color-accent-soft));
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .featureCard {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:hover {
+      border-color: var(--feature-color, var(--color-primary));
+    }
+  }
+
+  .impactCenter {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(14, 165, 233, 0.2));
+  }
+
+  .testimonialAuthor {
+    border-top-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .faqItem {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .finalCtaBg {
+    opacity: 0.1;
   }
 }

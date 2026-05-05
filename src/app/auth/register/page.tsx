@@ -6,6 +6,15 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/utils/supabase/client";
 import Link from "next/link";
 import styles from "./register.module.scss";
+import {
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
@@ -66,7 +75,7 @@ export default function RegisterPage() {
           router.push("/auth/login?message=Check your email to confirm signup");
         }, 2000);
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred.");
     } finally {
       setLoading(false);
@@ -85,8 +94,26 @@ export default function RegisterPage() {
         },
       });
       if (error) setError(error.message);
-    } catch (err) {
+    } catch {
       setError("Failed to sign up with GitHub");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      if (error) setError(error.message);
+    } catch {
+      setError("Failed to sign up with Google");
     } finally {
       setLoading(false);
     }
@@ -104,7 +131,7 @@ export default function RegisterPage() {
         },
       });
       if (error) setError(error.message);
-    } catch (err) {
+    } catch {
       setError("Failed to sign up with Google");
     } finally {
       setLoading(false);
@@ -114,31 +141,14 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className={styles.registerContainer}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100vh",
-          }}
-        >
-          <div
-            style={{
-              textAlign: "center",
-              padding: "40px",
-              background: "#f0f9f7",
-              borderRadius: "12px",
-            }}
-          >
-            <h1 style={{ color: "#0fa573", marginBottom: "16px" }}>
-              ✓ Account Created!
-            </h1>
-            <p style={{ marginBottom: "16px" }}>
-              Check your email to confirm your account
-            </p>
-            <p style={{ fontSize: "14px", color: "#666" }}>
-              Redirecting to login...
-            </p>
+        <div className={styles.successState}>
+          <div className={styles.successCard}>
+            <div className={styles.successIcon}>
+              <CheckCircle size={48} />
+            </div>
+            <h1>Account Created!</h1>
+            <p>Check your email to confirm your account</p>
+            <p className={styles.successHint}>Redirecting to login...</p>
           </div>
         </div>
       </div>
@@ -162,18 +172,9 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div
-              style={{
-                background: "#fee",
-                color: "#c33",
-                padding: "12px",
-                borderRadius: "6px",
-                marginBottom: "20px",
-                fontSize: "14px",
-                borderLeft: "4px solid #c33",
-              }}
-            >
-              ⚠️ {error}
+            <div className={styles.errorBox}>
+              <AlertCircle size={16} />
+              <span>{error}</span>
             </div>
           )}
 
@@ -184,32 +185,38 @@ export default function RegisterPage() {
               <label htmlFor="fullName" className={styles.label}>
                 Full name
               </label>
-              <input
-                id="fullName"
-                type="text"
-                placeholder="Enter your full name.."
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className={styles.input}
-                disabled={loading}
-                required
-              />
+              <div className={styles.inputWithIcon}>
+                <User size={16} className={styles.inputIcon} />
+                <input
+                  id="fullName"
+                  type="text"
+                  placeholder="Enter your full name.."
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className={`${styles.input} ${styles.inputWithLeftIcon}`}
+                  disabled={loading}
+                  required
+                />
+              </div>
             </div>
 
             <div className={styles.formGroup}>
               <label htmlFor="email" className={styles.label}>
                 Email
               </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="example@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={styles.input}
-                disabled={loading}
-                required
-              />
+              <div className={styles.inputWithIcon}>
+                <Mail size={16} className={styles.inputIcon} />
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="example@gmail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`${styles.input} ${styles.inputWithLeftIcon}`}
+                  disabled={loading}
+                  required
+                />
+              </div>
             </div>
 
             <div className={styles.formGroup}>
@@ -217,17 +224,19 @@ export default function RegisterPage() {
                 Password
               </label>
               <div className={styles.passwordContainer}>
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={styles.input}
-                  style={{ paddingRight: "2.5rem" }}
-                  disabled={loading}
-                  required
-                />
+                <div className={styles.inputWithIcon}>
+                  <Lock size={16} className={styles.inputIcon} />
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`${styles.input} ${styles.inputWithLeftIcon}`}
+                    disabled={loading}
+                    required
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -235,7 +244,7 @@ export default function RegisterPage() {
                   disabled={loading}
                   aria-label="Toggle password visibility"
                 >
-                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>

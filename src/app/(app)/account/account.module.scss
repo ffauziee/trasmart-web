@@ -12,6 +12,21 @@
   }
 }
 
+/* Loading & Error States */
+.loadingState {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.errorState {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-error);
+  background: var(--bgErrorSoft);
+  border-radius: var(--radius-md);
+}
+
 /* Topbar */
 .topbar {
   display: flex;
@@ -25,7 +40,7 @@
     font-family: var(--font-outfit), sans-serif;
     font-size: 1.875rem;
     font-weight: 800;
-    color: var(--color-text);
+    color: var(--color-primary);
     margin: 0;
 
     @media (min-width: $desktop) {
@@ -45,31 +60,38 @@
 }
 
 .notificationBtn {
-  background: var(--color-surface);
+  background: var(--color-primary);
   padding: 0.75rem;
   border-radius: 9999px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 14px rgba(22, 101, 52, 0.3);
   position: relative;
-  color: var(--color-primary);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  color: white;
+  border: none;
   cursor: pointer;
   transition: box-shadow 0.2s, transform 0.2s;
 
   &:hover {
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 6px 20px rgba(22, 101, 52, 0.4);
     transform: translateY(-1px);
   }
 }
 
 .notificationBadge {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 0.625rem;
-  height: 0.625rem;
+  top: 0.35rem;
+  right: 0.35rem;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
   background-color: var(--color-error);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
   border-radius: 9999px;
-  border: 2px solid var(--color-surface);
+  border: 2px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Content Layout */
@@ -250,6 +272,7 @@
 .editBtn {
   width: 100%;
   padding: 0.75rem;
+  min-height: 44px;
   margin-top: 1rem;
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   color: white;
@@ -268,6 +291,11 @@
   &:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-primary-glow);
+    outline-offset: 2px;
   }
 
   &:active {
@@ -330,6 +358,7 @@
 .cancelBtn {
   flex: 1;
   padding: 0.75rem;
+  min-height: 44px;
   border: none;
   border-radius: var(--radius-md);
   font-size: 0.95rem;
@@ -340,6 +369,16 @@
   justify-content: center;
   gap: 0.5rem;
   transition: all 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .saveBtn {
@@ -469,6 +508,7 @@
 .actionBtn {
   width: 100%;
   padding: 0.75rem;
+  min-height: 44px;
   margin-bottom: 0.75rem;
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -485,6 +525,11 @@
     color: var(--color-primary);
   }
 
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -498,6 +543,10 @@
   &:hover {
     background-color: rgba(239, 68, 68, 0.1);
     border-color: var(--color-error);
+  }
+
+  &:focus-visible {
+    outline-color: var(--color-error);
   }
 }
 
@@ -655,6 +704,68 @@
   font-size: 0.875rem;
   color: var(--color-text-secondary);
   margin: 0;
+}
+
+/* Toast Notification */
+.toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  animation: toastSlideIn 0.3s ease;
+  max-width: 400px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.toastSuccess {
+  background: var(--color-primary);
+  color: white;
+}
+
+.toastError {
+  background: var(--color-error);
+  color: white;
+}
+
+.toastMessage {
+  flex: 1;
+}
+
+.toastClose {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.25rem;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────── */

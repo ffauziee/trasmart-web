@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/utils/supabase/client";
 import styles from "./reset-password.module.scss";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock, Recycle } from "lucide-react";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -87,11 +87,9 @@ export default function ResetPasswordPage() {
     <div className={styles.main}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <img
-            width="80"
-            src="https://img.icons8.com/stickers/100/recycle-sign.png"
-            alt="recycle-sign"
-          />
+          <div className={styles.headerIcon}>
+            <Recycle size={48} />
+          </div>
           {success ? (
             <>
               <div className={styles.successIcon}>✓</div>

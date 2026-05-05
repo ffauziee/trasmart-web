@@ -9,16 +9,25 @@
   border: none;
   color: white;
   border-radius: 0.75rem;
-  padding: 0.55rem;
+  padding: 0.65rem;
+  min-width: 44px;
+  min-height: 44px;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(22, 101, 52, 0.35);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
-    transform: scale(1.08);
+    transform: scale(1.05);
     box-shadow: 0 6px 18px rgba(22, 101, 52, 0.45);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-primary-glow, #4ade80);
+    outline-offset: 2px;
   }
 
   &:active {
@@ -27,8 +36,6 @@
 
   @media (max-width: 1023px) {
     display: flex;
-    align-items: center;
-    justify-content: center;
   }
 }
 
@@ -73,12 +80,14 @@
   }
 
   @media (min-width: 1024px) {
-    position: relative;
+    position: sticky;
+    top: 1rem;
     height: calc(100vh - 2rem);
     margin: 1rem;
     border-radius: 1.5rem;
     transform: translateX(0);
     width: 90px;
+    align-self: flex-start;
   }
 }
 
@@ -290,6 +299,7 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  min-height: 44px;
 
   /* Shine sweep on hover */
   &::after {
@@ -319,6 +329,11 @@
     .menuIcon {
       transform: scale(1.12);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: -2px;
   }
 
   &:active {
@@ -429,6 +444,7 @@
   align-items: center;
   gap: 0.85rem;
   padding: 0.7rem 0.85rem;
+  min-height: 44px;
   color: rgba(158, 207, 185, 0.7);
   text-decoration: none;
   border-radius: 0.85rem;
@@ -437,6 +453,10 @@
     color 0.18s ease,
     transform 0.15s ease;
   font-size: 0.9rem;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
 
   &:hover {
     background: rgba(239, 68, 68, 0.12);
@@ -446,6 +466,11 @@
     .logoutIcon {
       transform: translateX(2px) scale(1.1);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: -2px;
   }
 
   &:active {

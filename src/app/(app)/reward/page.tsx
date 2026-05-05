@@ -148,7 +148,31 @@ export default function RewardRoute() {
     }
   };
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className={styles.mainContainer}>
+        <div className={styles.skeletonTopbar}>
+          <div className={styles.skeletonTitle} />
+          <div className={styles.skeletonDesc} />
+        </div>
+        <div className={styles.skeletonPoints} />
+        <div className={styles.skeletonCategories} />
+        <div className={styles.skeletonGrid}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={styles.skeletonCard}>
+              <div className={styles.skeletonImage} />
+              <div className={styles.skeletonName} />
+              <div className={styles.skeletonDesc} />
+              <div className={styles.skeletonFooter}>
+                <div className={styles.skeletonPoints} />
+                <div className={styles.skeletonBtn} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (

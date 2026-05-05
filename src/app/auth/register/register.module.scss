@@ -102,6 +102,63 @@
   margin: 0;
 }
 
+/* Error & Success States */
+.errorBox {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border-left: 4px solid #dc2626;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.successState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.successCard {
+  text-align: center;
+  padding: 40px;
+  background: #f0fdf4;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  max-width: 400px;
+  width: 100%;
+
+  h1 {
+    color: var(--color-primary);
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+  }
+
+  p {
+    margin-bottom: 8px;
+    color: var(--color-text-secondary);
+  }
+}
+
+.successIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-success);
+  margin-bottom: 16px;
+}
+
+.successHint {
+  font-size: 14px;
+  color: var(--color-text-muted) !important;
+  margin-top: 12px;
+}
+
 /* Form */
 .form {
   display: flex;
@@ -138,42 +195,86 @@
   }
 
   &:focus {
-    border-color: $accentColor;
-    box-shadow: 0 0 0 2px rgba(111, 168, 152, 0.1);
+    border-color: $dark-green;
+    box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.1);
+  }
+
+  &:focus-visible {
+    border-color: $dark-green;
+    box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.15);
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .inputIcon {
+    position: absolute;
+    left: 12px;
+    color: $textGray;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .inputWithLeftIcon {
+    padding-left: 2.5rem;
   }
 }
 
 .passwordContainer {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .passwordToggle {
   position: absolute;
-  right: 0.75rem;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: $textGray;
   cursor: pointer;
-  transition: color 0.2s ease;
-  padding: 0.25rem;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 6px;
+  transition: color 0.2s ease, background-color 0.2s ease;
 
   &:hover {
-    color: $gray-600;
+    color: $dark-green;
+    background-color: rgba(22, 101, 52, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $dark-green;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
 /* Submit Button */
 .submitBtn {
   width: 100%;
-  padding: 0.625rem;
+  height: 44px;
   border-radius: 0.75rem;
   font-size: 0.875rem;
-  font-weight: bold;
+  font-weight: 600;
   transition:
     opacity 0.2s ease,
     transform 0.1s ease;
@@ -187,8 +288,18 @@
     background-color: color.adjust($dark-green, $lightness: -10%);
   }
 
+  &:focus-visible {
+    outline: 3px solid $light-green;
+    outline-offset: 2px;
+  }
+
   &:active {
     transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
@@ -213,9 +324,21 @@
   color: $textDark;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  min-height: 44px;
 
   &:hover {
     background-color: $gray-50;
+    border-color: $gray-300;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $dark-green;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   svg {
