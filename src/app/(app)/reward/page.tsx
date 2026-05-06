@@ -53,36 +53,42 @@ export default function RewardRoute() {
   };
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchData = async () => {
       setLoading(true);
       setError(null);
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      // Force token refresh before any query
+      const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
 
-      if (!user) {
+      if (!session?.user) {
         setLoading(false);
         router.push("/auth/login");
         return;
       }
 
       try {
-        const data = await getRewardData(user.id);
-        setUserId(user.id);
+        const data = await getRewardData(session.user.id);
+        if (cancelled) return;
+        setUserId(session.user.id);
         setCurrentPoints(data.currentPoints);
         setRewards(data.rewards);
         setCategories(data.categories);
         setRedeemedRewards(data.redeemedRewards);
         setRedeemedPage(1);
       } catch (err) {
+        if (cancelled) return;
         setError(err instanceof Error ? err.message : "Terjadi kesalahan");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchData();
+
+    return () => { cancelled = true; };
   }, [router, supabase]);
 
   const filteredRewards =
@@ -151,24 +157,74 @@ export default function RewardRoute() {
   if (loading) {
     return (
       <div className={styles.mainContainer}>
+        {/* Topbar skeleton */}
         <div className={styles.skeletonTopbar}>
-          <div className={styles.skeletonTitle} />
-          <div className={styles.skeletonDesc} />
+          <div className={styles.skeletonTopbarContent}>
+            <div className={`${styles.skeletonPulse} ${styles.skeletonTitleLine}`} />
+            <div className={`${styles.skeletonPulse} ${styles.skeletonDescLine}`} />
+          </div>
+          <div className={`${styles.skeletonPulse} ${styles.skeletonNotifBtn}`} />
         </div>
-        <div className={styles.skeletonPoints} />
-        <div className={styles.skeletonCategories} />
-        <div className={styles.skeletonGrid}>
+
+        {/* Points card skeleton */}
+        <div className={styles.skeletonPointsCard}>
+          <div className={styles.skeletonPointsContent}>
+            <div className={`${styles.skeletonPulse} ${styles.skeletonPointsLabel}`} />
+            <div className={styles.skeletonPointsDisplay}>
+              <div className={`${styles.skeletonPulse} ${styles.skeletonPointsAmount}`} />
+              <div className={`${styles.skeletonPulse} ${styles.skeletonPointsUnit}`} />
+            </div>
+          </div>
+          <div className={styles.skeletonPointsInfo}>
+            <div className={`${styles.skeletonPulse} ${styles.skeletonInfoLine}`} />
+          </div>
+        </div>
+
+        {/* Category pills skeleton */}
+        <div className={styles.skeletonCategoryRow}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className={`${styles.skeletonPulse} ${styles.skeletonCategoryPill}`} />
+          ))}
+        </div>
+
+        {/* Rewards grid skeleton */}
+        <div className={styles.skeletonRewardsGrid}>
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className={styles.skeletonCard}>
-              <div className={styles.skeletonImage} />
-              <div className={styles.skeletonName} />
-              <div className={styles.skeletonDesc} />
-              <div className={styles.skeletonFooter}>
-                <div className={styles.skeletonPoints} />
-                <div className={styles.skeletonBtn} />
+            <div key={i} className={styles.skeletonRewardCard}>
+              <div className={`${styles.skeletonPulse} ${styles.skeletonRewardImage}`} />
+              <div className={styles.skeletonRewardBody}>
+                <div className={`${styles.skeletonPulse} ${styles.skeletonRewardName}`} />
+                <div className={`${styles.skeletonPulse} ${styles.skeletonRewardDesc}`} />
+                <div className={styles.skeletonRewardFooter}>
+                  <div className={`${styles.skeletonPulse} ${styles.skeletonRewardPts}`} />
+                  <div className={`${styles.skeletonPulse} ${styles.skeletonRewardBtn}`} />
+                </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Redeemed section skeleton */}
+        <div className={styles.skeletonRedeemedSection}>
+          <div className={styles.skeletonRedeemedHeader}>
+            <div className={`${styles.skeletonPulse} ${styles.skeletonRedeemedTitle}`} />
+            <div className={`${styles.skeletonPulse} ${styles.skeletonRedeemedSubtitle}`} />
+          </div>
+          <div className={styles.skeletonRedeemedList}>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className={styles.skeletonRedeemedCard}>
+                <div className={`${styles.skeletonPulse} ${styles.skeletonRedeemedIcon}`} />
+                <div className={styles.skeletonRedeemedContent}>
+                  <div className={`${styles.skeletonPulse} ${styles.skeletonRedeemedName}`} />
+                  <div className={`${styles.skeletonPulse} ${styles.skeletonRedeemedDescLine}`} />
+                  <div className={styles.skeletonRedeemedMeta}>
+                    <div className={`${styles.skeletonPulse} ${styles.skeletonRedeemedPts}`} />
+                    <div className={`${styles.skeletonPulse} ${styles.skeletonRedeemedDate}`} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

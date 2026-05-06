@@ -45,6 +45,69 @@ export function useAuth() {
   useEffect(() => {
     let isMounted = true;
 
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+
+        if (!isMounted) return;
+
+        const sessionUser = session?.user ?? null;
+        setUser(sessionUser);
+
+        if (sessionUser?.id) {
+          try {
+            const profileData = await fetchProfile(sessionUser.id);
+            if (!isMounted) return;
+
+            if (profileData) {
+              setUserProfile({
+                id: sessionUser.id,
+                username: profileData.username || "",
+                email: sessionUser.email || "",
+                points: profileData.points ?? 0,
+                fullName: profileData.full_name || "",
+                phone: profileData.phone || "",
+                address: profileData.address || "",
+                avatar: profileData.avatar_url || "",
+                city: profileData.city || "",
+                postal_code: profileData.postal_code || "",
+              });
+            } else {
+              setUserProfile({
+                id: sessionUser.id,
+                username: "",
+                email: sessionUser.email || "",
+                points: 0,
+                fullName: "",
+                phone: "",
+                address: "",
+                avatar: "",
+                city: "",
+                postal_code: "",
+              });
+            }
+          } catch (err) {
+            if (isMounted) {
+              setError(err instanceof Error ? err.message : "Auth error");
+            }
+          }
+        }
+
+        if (isMounted) {
+          setError(null);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : "Auth error");
+          setLoading(false);
+        }
+      }
+    };
+
+    initializeAuth();
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {

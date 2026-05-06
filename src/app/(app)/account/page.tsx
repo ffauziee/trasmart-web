@@ -23,11 +23,15 @@ import PageTopbar from "@/components/layout/PageTopbar";
 export default function AccountRoute() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { user, loading, error, updateUser, signOut, changePassword } = useUser();
+  const { user, loading, error, updateUser, signOut, changePassword } =
+    useUser();
   const [pointBalance, setPointBalance] = useState(0);
   const [pointError, setPointError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
-  const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [toast, setToast] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const userIdRef = useRef<string | null>(null);
   userIdRef.current = user?.id ?? null;
 
@@ -65,6 +69,8 @@ export default function AccountRoute() {
     try {
       setPointError(null);
       const supabase = createClient();
+      // Ensure the token is fresh before querying
+      await supabase.auth.getSession();
       const { data, error: fetchErr } = await supabase
         .from("profiles")
         .select("points")
@@ -80,14 +86,23 @@ export default function AccountRoute() {
   useEffect(() => {
     if (!user?.id) return;
     void loadPoints();
-    const intervalId = window.setInterval(() => { void loadPoints(); }, 10000);
-    const handleActivityChanged = () => { void loadPoints(); };
-    const handleFocus = () => { void loadPoints(); };
+    const intervalId = window.setInterval(() => {
+      void loadPoints();
+    }, 10000);
+    const handleActivityChanged = () => {
+      void loadPoints();
+    };
+    const handleFocus = () => {
+      void loadPoints();
+    };
     window.addEventListener("trasmart:activity-changed", handleActivityChanged);
     window.addEventListener("focus", handleFocus);
     return () => {
       window.clearInterval(intervalId);
-      window.removeEventListener("trasmart:activity-changed", handleActivityChanged);
+      window.removeEventListener(
+        "trasmart:activity-changed",
+        handleActivityChanged,
+      );
       window.removeEventListener("focus", handleFocus);
     };
   }, [user?.id, loadPoints]);
@@ -118,7 +133,8 @@ export default function AccountRoute() {
       setTimeout(() => setToast(null), 4000);
       window.dispatchEvent(new Event("trasmart:activity-changed"));
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update profile";
+      const errorMsg =
+        err instanceof Error ? err.message : "Failed to update profile";
       setToast({ type: "error", message: `Error: ${errorMsg}` });
       setTimeout(() => setToast(null), 5000);
     } finally {
@@ -126,14 +142,20 @@ export default function AccountRoute() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Handlers modal Change Password
   const handleOpenPasswordModal = () => {
-    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
     setPasswordError(null);
     setPasswordSuccess(null);
     setShowCurrentPw(false);
@@ -149,7 +171,9 @@ export default function AccountRoute() {
     setPasswordSuccess(null);
   };
 
-  const handlePasswordInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const { name, value } = e.target;
     setPasswordForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -177,15 +201,24 @@ export default function AccountRoute() {
 
     setIsChangingPassword(true);
     try {
-      await changePassword(passwordForm.currentPassword, passwordForm.newPassword);
+      await changePassword(
+        passwordForm.currentPassword,
+        passwordForm.newPassword,
+      );
       setPasswordSuccess("✓ Password berhasil diubah!");
-      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
       setTimeout(() => {
         setIsPasswordModalOpen(false);
         setPasswordSuccess(null);
       }, 2000);
     } catch (err) {
-      setPasswordError(err instanceof Error ? err.message : "Gagal mengubah password");
+      setPasswordError(
+        err instanceof Error ? err.message : "Gagal mengubah password",
+      );
     } finally {
       setIsChangingPassword(false);
     }
@@ -250,13 +283,19 @@ export default function AccountRoute() {
                 <User size={48} strokeWidth={1.5} />
               </div>
               {isEditing && (
-                <button className={styles.avatarEditBtn} type="button" aria-label="Change avatar">
+                <button
+                  className={styles.avatarEditBtn}
+                  type="button"
+                  aria-label="Change avatar"
+                >
                   <Camera size={16} />
                 </button>
               )}
             </div>
             <div className={styles.profileBasic}>
-              <h1 className={styles.profileName}>{user?.fullName || "Guest"}</h1>
+              <h1 className={styles.profileName}>
+                {user?.fullName || "Guest"}
+              </h1>
               {user?.username && (
                 <p className={styles.profileUsername}>@{user.username}</p>
               )}
@@ -267,36 +306,48 @@ export default function AccountRoute() {
             {!isEditing ? (
               <>
                 <div className={styles.detailItem}>
-                  <div className={styles.detailIcon}><User size={20} /></div>
+                  <div className={styles.detailIcon}>
+                    <User size={20} />
+                  </div>
                   <div className={styles.detailContent}>
                     <p className={styles.detailLabel}>User Name</p>
                     <p className={styles.detailValue}>{user?.username}</p>
                   </div>
                 </div>
                 <div className={styles.detailItem}>
-                  <div className={styles.detailIcon}><User size={20} /></div>
+                  <div className={styles.detailIcon}>
+                    <User size={20} />
+                  </div>
                   <div className={styles.detailContent}>
                     <p className={styles.detailLabel}>Nama Lengkap</p>
                     <p className={styles.detailValue}>{user?.fullName}</p>
                   </div>
                 </div>
                 <div className={styles.detailItem}>
-                  <div className={styles.detailIcon}><Mail size={20} /></div>
+                  <div className={styles.detailIcon}>
+                    <Mail size={20} />
+                  </div>
                   <div className={styles.detailContent}>
                     <p className={styles.detailLabel}>Email</p>
                     <p className={styles.detailValue}>{user?.email}</p>
-                    <small style={{ color: "#999" }}>Email cannot be changed here</small>
+                    <small style={{ color: "#999" }}>
+                      Email cannot be changed here
+                    </small>
                   </div>
                 </div>
                 <div className={styles.detailItem}>
-                  <div className={styles.detailIcon}><Phone size={20} /></div>
+                  <div className={styles.detailIcon}>
+                    <Phone size={20} />
+                  </div>
                   <div className={styles.detailContent}>
                     <p className={styles.detailLabel}>Nomor Telepon</p>
                     <p className={styles.detailValue}>{user?.phone}</p>
                   </div>
                 </div>
                 <div className={styles.detailItem}>
-                  <div className={styles.detailIcon}><MapPin size={20} /></div>
+                  <div className={styles.detailIcon}>
+                    <MapPin size={20} />
+                  </div>
                   <div className={styles.detailContent}>
                     <p className={styles.detailLabel}>Alamat</p>
                     <p className={styles.detailValue}>{user?.address}</p>
@@ -304,7 +355,9 @@ export default function AccountRoute() {
                 </div>
                 {user?.city && (
                   <div className={styles.detailItem}>
-                    <div className={styles.detailIcon}><MapPin size={20} /></div>
+                    <div className={styles.detailIcon}>
+                      <MapPin size={20} />
+                    </div>
                     <div className={styles.detailContent}>
                       <p className={styles.detailLabel}>Kota</p>
                       <p className={styles.detailValue}>{user.city}</p>
@@ -313,7 +366,9 @@ export default function AccountRoute() {
                 )}
                 {user?.postal_code && (
                   <div className={styles.detailItem}>
-                    <div className={styles.detailIcon}><MapPin size={20} /></div>
+                    <div className={styles.detailIcon}>
+                      <MapPin size={20} />
+                    </div>
                     <div className={styles.detailContent}>
                       <p className={styles.detailLabel}>Kode Pos</p>
                       <p className={styles.detailValue}>{user.postal_code}</p>
@@ -328,47 +383,119 @@ export default function AccountRoute() {
             ) : (
               <>
                 <div className={styles.formGroup}>
-                  <label htmlFor="username" className={styles.label}>User Name</label>
-                  <input id="username" name="username" type="text" className={styles.input}
-                    value={formData.username || ""} onChange={handleInputChange} disabled={isSaving} />
+                  <label htmlFor="username" className={styles.label}>
+                    User Name
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    className={styles.input}
+                    value={formData.username || ""}
+                    onChange={handleInputChange}
+                    disabled={isSaving}
+                  />
                 </div>
                 <div className={styles.formGroup}>
-                  <label htmlFor="fullName" className={styles.label}>Nama Lengkap</label>
-                  <input id="fullName" name="fullName" type="text" className={styles.input}
-                    value={formData.fullName || ""} onChange={handleInputChange} disabled={isSaving} />
+                  <label htmlFor="fullName" className={styles.label}>
+                    Nama Lengkap
+                  </label>
+                  <input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    className={styles.input}
+                    value={formData.fullName || ""}
+                    onChange={handleInputChange}
+                    disabled={isSaving}
+                  />
                 </div>
                 <div className={styles.formGroup}>
-                  <label htmlFor="email" className={styles.label}>Email</label>
-                  <input id="email" type="email" className={styles.input}
-                    value={user?.email} disabled style={{ opacity: 0.6 }} />
-                  <small style={{ color: "#999" }}>Email cannot be changed</small>
+                  <label htmlFor="email" className={styles.label}>
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    className={styles.input}
+                    value={user?.email}
+                    disabled
+                    style={{ opacity: 0.6 }}
+                  />
+                  <small style={{ color: "#999" }}>
+                    Email cannot be changed
+                  </small>
                 </div>
                 <div className={styles.formGroup}>
-                  <label htmlFor="phone" className={styles.label}>Nomor Telepon</label>
-                  <input id="phone" name="phone" type="tel" className={styles.input}
-                    value={formData.phone || ""} onChange={handleInputChange} disabled={isSaving} />
+                  <label htmlFor="phone" className={styles.label}>
+                    Nomor Telepon
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    className={styles.input}
+                    value={formData.phone || ""}
+                    onChange={handleInputChange}
+                    disabled={isSaving}
+                  />
                 </div>
                 <div className={styles.formGroup}>
-                  <label htmlFor="address" className={styles.label}>Alamat</label>
-                  <input id="address" name="address" type="text" className={styles.input}
-                    value={formData.address || ""} onChange={handleInputChange} disabled={isSaving} />
+                  <label htmlFor="address" className={styles.label}>
+                    Alamat
+                  </label>
+                  <input
+                    id="address"
+                    name="address"
+                    type="text"
+                    className={styles.input}
+                    value={formData.address || ""}
+                    onChange={handleInputChange}
+                    disabled={isSaving}
+                  />
                 </div>
                 <div className={styles.formGroup}>
-                  <label htmlFor="city" className={styles.label}>Kota</label>
-                  <input id="city" name="city" type="text" className={styles.input}
-                    value={formData.city || ""} onChange={handleInputChange} disabled={isSaving} />
+                  <label htmlFor="city" className={styles.label}>
+                    Kota
+                  </label>
+                  <input
+                    id="city"
+                    name="city"
+                    type="text"
+                    className={styles.input}
+                    value={formData.city || ""}
+                    onChange={handleInputChange}
+                    disabled={isSaving}
+                  />
                 </div>
                 <div className={styles.formGroup}>
-                  <label htmlFor="postal_code" className={styles.label}>Kode Pos</label>
-                  <input id="postal_code" name="postal_code" type="text" className={styles.input}
-                    value={formData.postal_code || ""} onChange={handleInputChange} disabled={isSaving} />
+                  <label htmlFor="postal_code" className={styles.label}>
+                    Kode Pos
+                  </label>
+                  <input
+                    id="postal_code"
+                    name="postal_code"
+                    type="text"
+                    className={styles.input}
+                    value={formData.postal_code || ""}
+                    onChange={handleInputChange}
+                    disabled={isSaving}
+                  />
                 </div>
                 <div className={styles.formActions}>
-                  <button className={styles.saveBtn} onClick={handleSave} disabled={isSaving}>
+                  <button
+                    className={styles.saveBtn}
+                    onClick={handleSave}
+                    disabled={isSaving}
+                  >
                     <Check size={18} />
                     {isSaving ? "Saving..." : "Simpan Perubahan"}
                   </button>
-                  <button className={styles.cancelBtn} onClick={handleCancel} disabled={isSaving}>
+                  <button
+                    className={styles.cancelBtn}
+                    onClick={handleCancel}
+                    disabled={isSaving}
+                  >
                     <X size={18} />
                     Batal
                   </button>
@@ -385,18 +512,17 @@ export default function AccountRoute() {
               <span className={styles.pointsValue}>{pointBalance}</span>
               <span className={styles.pointsUnit}>Pts</span>
             </div>
-            <p className={styles.pointsHint}>
-              Otomatis sinkron dari transaksi berhasil dan penukaran reward.
-            </p>
             {pointError && <p className={styles.pointsError}>{pointError}</p>}
           </div>
 
           <div className={styles.actionsCard}>
             <h3 className={styles.actionsTitle}>Quick Actions</h3>
-            <button className={styles.actionBtn} onClick={handleOpenPasswordModal}>
+            <button
+              className={styles.actionBtn}
+              onClick={handleOpenPasswordModal}
+            >
               Ubah Password
             </button>
-            <button className={styles.actionBtn}>Preferensi Notifikasi</button>
             <button
               className={styles.actionBtn + " " + styles.dangerBtn}
               onClick={signOut}
@@ -416,7 +542,10 @@ export default function AccountRoute() {
           aria-modal="true"
           aria-labelledby="modal-password-title"
         >
-          <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+          <div
+            className={styles.modalCard}
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
             <div className={styles.modalHeader}>
               <h2 id="modal-password-title" className={styles.modalTitle}>
@@ -432,14 +561,21 @@ export default function AccountRoute() {
               </button>
             </div>
 
-            <form onSubmit={(e) => { e.preventDefault(); void handlePasswordChange(); }}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                void handlePasswordChange();
+              }}
+            >
               {/* Password Saat Ini */}
               <div className={styles.formGroup}>
                 <label htmlFor="currentPassword" className={styles.label}>
                   Password Saat Ini
                 </label>
                 <div className={styles.passwordInputWrapper}>
-                  <span className={styles.passwordIconLeft}><Lock size={16} /></span>
+                  <span className={styles.passwordIconLeft}>
+                    <Lock size={16} />
+                  </span>
                   <input
                     id="currentPassword"
                     name="currentPassword"
@@ -451,8 +587,11 @@ export default function AccountRoute() {
                     placeholder="Masukkan password saat ini"
                     autoComplete="current-password"
                   />
-                  <button type="button" className={styles.passwordToggleBtn}
-                    onClick={() => setShowCurrentPw((p) => !p)}>
+                  <button
+                    type="button"
+                    className={styles.passwordToggleBtn}
+                    onClick={() => setShowCurrentPw((p) => !p)}
+                  >
                     {showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -464,7 +603,9 @@ export default function AccountRoute() {
                   Password Baru
                 </label>
                 <div className={styles.passwordInputWrapper}>
-                  <span className={styles.passwordIconLeft}><Lock size={16} /></span>
+                  <span className={styles.passwordIconLeft}>
+                    <Lock size={16} />
+                  </span>
                   <input
                     id="newPassword"
                     name="newPassword"
@@ -476,8 +617,11 @@ export default function AccountRoute() {
                     placeholder="Minimal 8 karakter"
                     autoComplete="new-password"
                   />
-                  <button type="button" className={styles.passwordToggleBtn}
-                    onClick={() => setShowNewPw((p) => !p)}>
+                  <button
+                    type="button"
+                    className={styles.passwordToggleBtn}
+                    onClick={() => setShowNewPw((p) => !p)}
+                  >
                     {showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -490,7 +634,9 @@ export default function AccountRoute() {
                   Konfirmasi Password Baru
                 </label>
                 <div className={styles.passwordInputWrapper}>
-                  <span className={styles.passwordIconLeft}><Lock size={16} /></span>
+                  <span className={styles.passwordIconLeft}>
+                    <Lock size={16} />
+                  </span>
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
@@ -502,27 +648,42 @@ export default function AccountRoute() {
                     placeholder="Ulangi password baru"
                     autoComplete="new-password"
                   />
-                  <button type="button" className={styles.passwordToggleBtn}
-                    onClick={() => setShowConfirmPw((p) => !p)}>
+                  <button
+                    type="button"
+                    className={styles.passwordToggleBtn}
+                    onClick={() => setShowConfirmPw((p) => !p)}
+                  >
                     {showConfirmPw ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
 
               {passwordError && (
-                <div className={styles.errorMessage} role="alert">{passwordError}</div>
+                <div className={styles.errorMessage} role="alert">
+                  {passwordError}
+                </div>
               )}
               {passwordSuccess && (
-                <div className={styles.successMessage} role="status">{passwordSuccess}</div>
+                <div className={styles.successMessage} role="status">
+                  {passwordSuccess}
+                </div>
               )}
 
               <div className={styles.formActions}>
-                <button type="submit" className={styles.saveBtn} disabled={isChangingPassword}>
+                <button
+                  type="submit"
+                  className={styles.saveBtn}
+                  disabled={isChangingPassword}
+                >
                   <Check size={18} />
                   {isChangingPassword ? "Menyimpan..." : "Simpan Password"}
                 </button>
-                <button type="button" className={styles.cancelBtn}
-                  onClick={handleClosePasswordModal} disabled={isChangingPassword}>
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={handleClosePasswordModal}
+                  disabled={isChangingPassword}
+                >
                   <X size={18} />
                   Batal
                 </button>
